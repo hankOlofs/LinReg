@@ -5,6 +5,8 @@
 # model.matrix() to create the matrix X (independent variables) and the pick out the dependent variable
 # y using all.vars().
 
+#library(ggplot2)
+
 linreg <- function(formula, data) {
   stopifnot("Formula object is not valid" = class(formula) == "formula")
   stopifnot("Formula object is not valid" = is.data.frame(data))
@@ -48,7 +50,9 @@ linreg <- function(formula, data) {
   # p-value
   pt <- 2*pt(-abs(t), df,lower.tail = TRUE)
   
-  statistics <- list(coef = beta_hat, 
+  statistics <- list(data = data,
+                     formula = formula,
+                     coef = beta_hat, 
                      fits = y_hat,
                      resid = e_hat,
                      df = df,
@@ -59,3 +63,28 @@ linreg <- function(formula, data) {
   )
   return(structure(statistics, class = "LinReg"))
 }
+
+
+# fix the print method... Sof
+print.LinReg <- function(x, ...) {
+  formula <- x$formula
+  cat("Call: \n")
+  print(formula ,quote=F)
+  # cat(paste0("linreg(formula = ", formula, ", data = " , substitute(data), ")"))
+  print(x$coef, quote=F)
+  print(x$resid)
+}
+
+# plot method, 
+plot.LinReg <- function(x, ...) {
+  # ggplot(data=x$data, mapping = ae) #add all the ggplot stuff here to plot 
+
+  
+}
+
+
+# resid method, not working - Henrik
+resid.LinReg <- function(object, ...) {
+  as.vector(object$resid)
+}
+

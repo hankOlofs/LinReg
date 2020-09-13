@@ -7,6 +7,8 @@
 
 linreg <- function(formula, data) {
   stopifnot("Formula object is not valid" = class(formula) == "formula")
+  stopifnot("Formula object is not valid" = is.data.frame(data))
+  # stopifnot(all.vars(formula) %in% which(classes == "numeric")) # add a check to make sure all variables in the formula are numeric
   
   # Extract all variables using all.vars() (as demanded in the task)
   variables <- all.vars(formula)

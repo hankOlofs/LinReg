@@ -7,6 +7,53 @@
 
 linreg <- function(formula, data) {
   stopifnot("Formula object is not valid" = class(formula) == "formula")
-  model.matrix(formula, data = data)
-  y<-all.vars(formula)[1]
+  
+  # Extract all variables using all.vars() (as demanded in the task)
+  variables <- all.vars(formula)
+  
+  # Create data set with the variables in the formula expression
+  sub_data <- data[,variables]
+  
+  # Create matrix X containing the independent variables
+  X <- model.matrix(formula, data = sub_data)
+  
+  # Create the dependent variable y 
+  y <- sub_data[1]
+  
+  # Regressions coefficients:
+  beta_hat <- as.vector(solve(t(X) %*% X) %*% t(X) %*% as.matrix(y))
+  
+  # The fitted values:
+  y_hat <- X %*% beta_hat
+  
+  # The residuals:
+  e_hat <- as.matrix(y - y_hat)
+  
+  # The degrees of freedom:
+  n <- nrow(X)
+  p <- ncol(X)
+  df <- n - p 
+  
+  # The residual variance:
+  resid_var <- as.vector(t(e_hat) %*%e_hat/df)
+  
+  # The variance of the regression coefficients:
+  var_hat <- diag(resid_var * as.matrix(solve(t(X)%*%X)))
+  
+  # The t-values for each coefficient:
+  t <- beta_hat/sqrt(var_hat)
+  
+  # p-value
+  pt <- 2*pt(-abs(t), df,lower.tail = TRUE)
+  
+  statistics <- list(coef = beta_hat, 
+                     fits = y_hat,
+                     resid = e_hat,
+                     df = df,
+                     resid_var = resid_var,
+                     coef_var = var_hat,
+                     t_val = t,
+                     p_val = pt
+  )
+  return(structure(statistics, class = "LinReg"))
 }

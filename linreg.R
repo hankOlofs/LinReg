@@ -84,7 +84,7 @@ plot.LinReg <- function(x, ...) {
 
 
 # resid method, not working - Henrik
-resid.LinReg <- function(object, ...) {
-  as.vector(object$resid)
+residuals.LinReg <- function(object, ...) {
+  print(as.vector(object$resid))
 }
 

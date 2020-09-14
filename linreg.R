@@ -86,10 +86,22 @@ print.LinReg <- function(x, ...) {
 # plot method
 plot.LinReg <- function(x, ...) {
   # ggplot(data=x$data, mapping = ae) #add all the ggplot stuff here to plot 
-
+  f <- x$formula
   
-}
+  d1 <- data.frame(x$fits,x$resid)
+  names(d1) <- c("Fits", "Residuals")
+  #d2 <- cbind(abs(x$resid), x$fits)
+  p <- ggplot(data = d1, aes(Fits, Residuals)) +
+    geom_point(shape = 1, size = 3) +
+    stat_summary_bin(fun = median, aes(group=1), geom = "line", colour = "red") +
+    ggtitle("Residuals vs Fitted")
+  
+  p + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
 
+  # q <- qplot(Fits, Residuals, data=d1) +
+  #   stat_summary(fun= mean, colour="red", geom="line")
+  # q
+}
 
 # resid method
 residuals.LinReg <- function(object, ...) {
@@ -151,6 +163,19 @@ summary.LinReg <- function(object, ...) {
 data(mtcars)
 expression <- mpg ~ wt + cyl
 test1 <- linreg(expression, mtcars)
+print(test1)
+#plot()
+resid(test1)
+coef(test1)
+predict(test1)
+summary(test1)
+
+# TEST using iris
+
+# TEST by using mtcars
+data("iris")
+expression <- Petal.Length ~ Species
+test1 <- linreg(expression, iris)
 print(test1)
 #plot()
 resid(test1)

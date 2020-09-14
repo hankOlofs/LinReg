@@ -51,6 +51,8 @@ linreg <- function(formula, data) {
   pt <- 2*pt(-abs(t), df,lower.tail = TRUE)
   
   statistics <- list(data = data,
+                     X = X,
+                     data_name = substitute(data),
                      formula = formula,
                      coef = beta_hat, 
                      fits = y_hat,
@@ -65,17 +67,23 @@ linreg <- function(formula, data) {
 }
 
 
-# fix the print method... Sof
+# print method
 print.LinReg <- function(x, ...) {
   formula <- x$formula
-  cat("Call: \n")
-  print(formula ,quote=F)
-  # cat(paste0("linreg(formula = ", formula, ", data = " , substitute(data), ")"))
-  print(x$coef, quote=F)
-  print(x$resid)
+  cat("\n\nCall: \n")
+  writeLines(paste("linreg(formula = ", 
+                   capture.output(print(formula)),
+                   ", data = ",
+                   capture.output(print(x$data_name)),
+                   ")",
+                   sep = ""))
+  cat("\nCoefficients: \n")
+  obj <- x$coef
+  names(obj) <- colnames(x$X)
+  writeLines(paste("\t", capture.output(print(obj)), sep = ""))
 }
 
-# plot method, 
+# plot method
 plot.LinReg <- function(x, ...) {
   # ggplot(data=x$data, mapping = ae) #add all the ggplot stuff here to plot 
 
@@ -83,8 +91,69 @@ plot.LinReg <- function(x, ...) {
 }
 
 
-# resid method, not working - Henrik
+# resid method
 residuals.LinReg <- function(object, ...) {
   print(as.vector(object$resid))
 }
 
+# pred method
+# works for predict() but not pred()
+predict.LinReg <- function(object, ...) {
+  print(as.vector(object$fits))
+}
+
+# coef method
+coef.LinReg <- function(object, ...) {
+  obj <- object$coef
+  names(obj) <- colnames(object$X)
+  print(obj)
+}
+
+# summary method
+# present the coefficients with their...
+# standard error, t-value and p-value as well as the estimate of σˆ and df in the model.
+summary.LinReg <- function(object, ...) {
+  formula <- object$formula
+  cat("\n\nCall: \n")
+  writeLines(paste("linreg(formula = ", 
+                   capture.output(print(formula)),
+                   ", data = ",
+                   capture.output(print(object$data_name)),
+                   ")",
+                   sep = ""))
+  cat("\nResiduals: \n")
+  q <- data.frame(Min = round(quantile(object$resid, names = FALSE), 4)[1],
+                   Q1 = round(quantile(object$resid, names = FALSE), 4)[2],
+                   Median = round(quantile(object$resid, names = FALSE), 4)[3],
+                   Q3 = round(quantile(object$resid, names = FALSE), 4)[4],
+                   Max = round(quantile(object$resid, names = FALSE), 4)[5])
+  rownames(q) <- c("")  
+  print(q)
+
+  cat("\nCoefficients: \n")
+  obj <- object$coef
+  names(obj) <- colnames(object$X)
+  # Create table as a data.frame
+  print(data.frame(Estimate = round(object$coef, 4), 
+                   `Std Error` = round(sqrt(object$coef_var), 4), 
+                   `t value` = round(object$t_val, 4),
+                   `p value` = signif(object$p_val, 4)))
+  cat("---\n")
+  writeLines(paste("Residual standard error: ", 
+                   signif(sqrt(object$resid_var), 3),
+                   " on ",
+                   object$df,
+                   " degrees of freedom ",
+                   sep = "")) 
+}
+
+# TEST by using mtcars
+data(mtcars)
+expression <- mpg ~ wt + cyl
+test1 <- linreg(expression, mtcars)
+print(test1)
+#plot()
+resid(test1)
+coef(test1)
+predict(test1)
+summary(test1)

@@ -151,39 +151,59 @@ coef.linreg <- function(object, ...) {
 #' @export
 #'
 #' @examples
+#' 
+# summary.linreg <- function(object, ...) {
+#   formula <- object$formula
+#   cat("\n\nCall: \n")
+#   writeLines(paste("linreg(formula = ",
+#                    capture.output(print(formula)),
+#                    ", data = ",
+#                    capture.output(print(object$data_name)),
+#                    ")",
+#                    sep = ""))
+#   cat("\nResiduals: \n")
+#   q <- data.frame(Min = round(quantile(object$resid, names = FALSE), 4)[1],
+#                   Q1 = round(quantile(object$resid, names = FALSE), 4)[2],
+#                   Median = round(quantile(object$resid, names = FALSE), 4)[3],
+#                   Q3 = round(quantile(object$resid, names = FALSE), 4)[4],
+#                   Max = round(quantile(object$resid, names = FALSE), 4)[5])
+#   rownames(q) <- c("")
+#   print(q)
+# 
+#   cat("\nCoefficients: \n")
+#   obj <- object$coef
+#   names(obj) <- colnames(object$X)
+#   # Create table as a data.frame
+#   print(data.frame(Estimate = round(object$coef, 4),
+#                    StdError = round(sqrt(object$coef_var), 4),
+#                    tvalue = round(object$t_val, 4),
+#                    pvalue = signif(object$p_val, 4)))
+#   cat("---\n")
+#   writeLines(paste("Residual standard error: ",
+#                    signif(sqrt(object$resid_var), 3),
+#                    " on ",
+#                    object$df,
+#                    " degrees of freedom ",
+#                    sep = ""))
+# }
+
+
 summary.linreg <- function(object, ...) {
-  formula <- object$formula
-  cat("\n\nCall: \n")
-  writeLines(paste("linreg(formula = ", 
-                   capture.output(print(formula)),
-                   ", data = ",
-                   capture.output(print(object$data_name)),
-                   ")",
-                   sep = ""))
-  cat("\nResiduals: \n")
-  q <- data.frame(Min = round(quantile(object$resid, names = FALSE), 4)[1],
-                  Q1 = round(quantile(object$resid, names = FALSE), 4)[2],
-                  Median = round(quantile(object$resid, names = FALSE), 4)[3],
-                  Q3 = round(quantile(object$resid, names = FALSE), 4)[4],
-                  Max = round(quantile(object$resid, names = FALSE), 4)[5])
-  rownames(q) <- c("")  
-  print(q)
+  # p value is not in test-linreg?
+  # intercept values
+  writeLines(paste(colnames(object$X)[1],
+            round(object$coef[1], 4),
+            round(sqrt(object$coef_var[1]), 4),
+            round(object$t_val[1], 4),
+            round(object$p_val[1], 10)))
   
-  cat("\nCoefficients: \n")
-  obj <- object$coef
-  names(obj) <- colnames(object$X)
-  # Create table as a data.frame
-  print(data.frame(Estimate = round(object$coef, 4), 
-                   `Std Error` = round(sqrt(object$coef_var), 4), 
-                   `t value` = round(object$t_val, 4),
-                   `p value` = signif(object$p_val, 4)))
-  cat("---\n")
-  writeLines(paste("Residual standard error: ", 
+  # Added "test" so the residual line fails
+  writeLines(paste("Residual standard error: ",
                    signif(sqrt(object$resid_var), 3),
                    " on ",
                    object$df,
-                   " degrees of freedom ",
-                   sep = "")) 
+                   " degrees of freedotestm ",
+                   sep = ""))
 }
 
 # TEST by using mtcars
@@ -197,15 +217,15 @@ coef(test1)
 predict(test1)
 summary(test1)
 
-# TEST using iris
 
-# TEST by using mtcars
+
+# TEST by using iris
 data("iris")
-expression <- Petal.Length ~ Species
-test1 <- linreg(expression, iris)
-print(test1)
-#plot()
-resid(test1)
-coef(test1)
-predict(test1)
-summary(test1)
+
+linreg_mod <- linreg(Petal.Length~Sepal.Width+Sepal.Length, data=iris)
+summary(linreg_mod)
+
+
+lm_mod <- lm(Petal.Length~Sepal.Width+Sepal.Length, data=iris)
+summary(lm_mod)
+

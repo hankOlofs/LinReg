@@ -85,22 +85,40 @@ print.LinReg <- function(x, ...) {
 
 # plot method
 plot.LinReg <- function(x, ...) {
-  # ggplot(data=x$data, mapping = ae) #add all the ggplot stuff here to plot 
+  # ggplot(data=x$data, mapping = ae) #add all the ggplot stuff here to plot
   f <- x$formula
   
-  d1 <- data.frame(x$fits,x$resid)
+  d1 <- data.frame(x$fits, x$resid)
   names(d1) <- c("Fits", "Residuals")
-  #d2 <- cbind(abs(x$resid), x$fits)
-  p <- ggplot(data = d1, aes(Fits, Residuals)) +
-    geom_point(shape = 1, size = 3) +
-    stat_summary_bin(fun = median, aes(group=1), geom = "line", colour = "red") +
-    ggtitle("Residuals vs Fitted")
-  
-  p + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+  d2 <- data.frame(x$fits, sqrt(abs(x$resid/sqrt(x$resid_var))))
+  print(d2)
+  names(d2) <- c("Fits", "Standardized residuals")
 
-  # q <- qplot(Fits, Residuals, data=d1) +
-  #   stat_summary(fun= mean, colour="red", geom="line")
-  # q
+  resplot <- function(data, x = data[,1], y = data[,2], title) {
+    p <- ggplot(data = data, aes(x, y)) +
+      geom_point(shape = 1, size = 3) +
+      stat_summary_bin(fun = median,
+                       aes(group = 1),
+                       geom = "line",
+                       colour = "red") +
+      ggtitle(title)
+    
+    p + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+  }
+  
+  resplot(data = d1, title = "Residuals vs Fitted")
+  resplot(data = d2, title = "Standardized residuals vs Fitted")
+  
+  # p <- ggplot(data = d1, aes(Fits, Residuals)) +
+  #   geom_point(shape = 1, size = 3) +
+  #   stat_summary_bin(fun = median,
+  #                    aes(group = 1),
+  #                    geom = "line",
+  #                    colour = "red") +
+  #   ggtitle("Residuals vs Fitted")
+  # 
+  # p + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+  
 }
 
 # resid method

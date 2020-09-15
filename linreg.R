@@ -119,18 +119,24 @@ plot.LinReg <- function(x, ...) {
   # finally, add the outliers as geom_points and include label=rownames([data])
   # also, adjust the axis labels (x axis should include formula)
   
-  outliers <- boxplot.stats(d1[,2])$out
-  print(outliers)
-  d1$out <- NA
-  d1[d1[,2] == outliers, ] <- 1
-    
+  outliers_d1 <- boxplot.stats(d1[,2])$out
+  cond_d1 <- d1[,2] == outliers_d1
+  d1$outliers <- 0
+  d1$outliers <- ifelse(cond_d1, 1, 0)
+  print(d1)
+
+  # d1$out <- NA
+  # d1[d1[,2] %in% outliers, ] <- 1
   
-  p <- ggplot(data = d1, aes(Fits, Residuals)) +
+  p <- ggplot(data = d1[-cond_d1,], aes(Fits, Residuals)) +
     geom_point(shape = 1, size = 3) +
-    stat_summary_bin(fun = median,
+    stat_summary(data = d1[d1$outliers == 0,], fun = median,
                      aes(group = 1),
                      geom = "line",
                      colour = "red") +
+    geom_point(data = d1[cond_d1,], shape = 1, size = 3) +
+    geom_text(data = d1[d1$outliers>0,], aes(label = rownames(d1[d1$outliers>0,])), hjust = 1.2) + 
+    geom_hline(yintercept = 0, linetype = "dotted", colour = "gray") +
     ggtitle("Residuals vs Fitted")
 
   p + theme_bw() + theme(plot.title = element_text(hjust = 0.5))

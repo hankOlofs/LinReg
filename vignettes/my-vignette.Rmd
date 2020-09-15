@@ -30,8 +30,9 @@ Miles/(US) gallon, for cars in the \code{mtcars} data set. Thus, the independent
 variables are \code{wt} and \code{cyl} and the dependent variable is \code{mpg},
 and can be expressed as $\text{mpg} \sim \text{wt} + \text{cyl}$.
 
-A linear regression model is fit by using
+A linear regression model is fitted by using
 ```{r}
+usethis::use_vignette("my-vignette")
 data(mtcars)
 model <- linreg(formula = mpg ~ wt + cyl, data = mtcars )
 

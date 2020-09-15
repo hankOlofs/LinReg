@@ -117,6 +117,13 @@ plot.LinReg <- function(x, ...) {
   # is an outlier (create a function)
   # then, plot only non-outliers as points and use only non-outliers to calc median
   # finally, add the outliers as geom_points and include label=rownames([data])
+  # also, adjust the axis labels (x axis should include formula)
+  
+  outliers <- boxplot.stats(d1[,2])$out
+  print(outliers)
+  d1$out <- NA
+  d1[d1[,2] == outliers, ] <- 1
+    
   
   p <- ggplot(data = d1, aes(Fits, Residuals)) +
     geom_point(shape = 1, size = 3) +

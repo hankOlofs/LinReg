@@ -38,3 +38,11 @@ model <- linreg(formula = mpg ~ wt + cyl, data = mtcars )
 
 ```
 
+```{r}
+print(model)
+```
+
+
+
+
+

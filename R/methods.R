@@ -43,7 +43,9 @@ plot.linreg <- function(x, ...) {
   names(d2) <- c("Fits", "Standardized_residuals")
   
   iqr <- IQR(d1$Residuals)
-  d1$outliers <- ifelse((d1$Residuals > as.numeric(quantile(d1$Residuals)[4] + iqr*1.5)) | (d1$Residuals < as.numeric(quantile(d1$Residuals)[2] - iqr*1.5)),1,0)
+  d1$outliers <-
+    ifelse((d1$Residuals > as.numeric(quantile(d1$Residuals)[4] + iqr * 1.5)) |
+             (d1$Residuals < as.numeric(quantile(d1$Residuals)[2] - iqr * 1.5)), 1, 0)
   d2$outliers <- d1$outliers
   
   # Diagostics:
@@ -66,7 +68,7 @@ plot.linreg <- function(x, ...) {
       # a smooth line makes more sense than the straight lines of the lab example
       geom_smooth(data = data[data$outliers == 0, ], method = "loess") +
       geom_point(data = data[data$outliers == 1,], shape = 1, size = 3) +
-      geom_text(data = data[data$outliers == 1,], aes(label = rownames(data[data$outliers>0,])), hjust = 1.2) + 
+      geom_text(data = data[data$outliers == 1,], aes(label = rownames(data[data$outliers == 1,])), hjust = 1.2) + 
       geom_hline(yintercept = 0, linetype = "dotted", colour = "gray") +
       ggtitle(title)
     

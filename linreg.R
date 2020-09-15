@@ -91,34 +91,43 @@ plot.LinReg <- function(x, ...) {
   d1 <- data.frame(x$fits, x$resid)
   names(d1) <- c("Fits", "Residuals")
   d2 <- data.frame(x$fits, sqrt(abs(x$resid/sqrt(x$resid_var))))
-  print(d2)
   names(d2) <- c("Fits", "Standardized residuals")
+  
+  print(d1)
+  print(d2)
 
-  resplot <- function(data, x = data[,1], y = data[,2], title) {
-    p <- ggplot(data = data, aes(x, y)) +
-      geom_point(shape = 1, size = 3) +
-      stat_summary_bin(fun = median,
-                       aes(group = 1),
-                       geom = "line",
-                       colour = "red") +
-      ggtitle(title)
-    
-    p + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
-  }
+  ## Tried making a function out of the plotting, which does not seem to work properly as of now
   
-  resplot(data = d1, title = "Residuals vs Fitted")
-  resplot(data = d2, title = "Standardized residuals vs Fitted")
-  
-  # p <- ggplot(data = d1, aes(Fits, Residuals)) +
-  #   geom_point(shape = 1, size = 3) +
-  #   stat_summary_bin(fun = median,
-  #                    aes(group = 1),
-  #                    geom = "line",
-  #                    colour = "red") +
-  #   ggtitle("Residuals vs Fitted")
+  # resplot <- function(data, title) {
+  #   p <- ggplot(data = data, aes(data[,1], data[,2])) +
+  #     geom_point(shape = 1, size = 3) +
+  #     stat_summary_bin(fun = median,
+  #                      aes(group = 1),
+  #                      geom = "line",
+  #                      colour = "red") +
+  #     ggtitle(title)
+  #   
+  #   p + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+  # }
   # 
-  # p + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+  # resplot(data = d1, title = "Residuals vs Fitted")
+  # resplot(data = d2, title = "Standardized residuals vs Fitted")
   
+  # strategy: create a new column in dataframe indicating whether an observation
+  # is an outlier (create a function)
+  # then, plot only non-outliers as points and use only non-outliers to calc median
+  # finally, add the outliers as geom_points and include label=rownames([data])
+  
+  p <- ggplot(data = d1, aes(Fits, Residuals)) +
+    geom_point(shape = 1, size = 3) +
+    stat_summary_bin(fun = median,
+                     aes(group = 1),
+                     geom = "line",
+                     colour = "red") +
+    ggtitle("Residuals vs Fitted")
+
+  p + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+
 }
 
 # resid method

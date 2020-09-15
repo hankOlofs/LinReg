@@ -1,0 +1,2 @@
+export("coef.LinReg", "expression", "linreg", "plot.LinReg", "pred", "pred.LinReg",
+       "print.LinReg", "residuals.LinReg", "summary.LinReg", "test1")

@@ -1,14 +1,28 @@
 Package: LinReg
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
+Title: Fitting Linear Regression Models
+Version: 0.1
 Date: 2020-09-15
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: GPL
+Authors@R: c(person("Sofie", "Jörgensen", 
+                    role = c("aut", "cre"), 
+                    email = "sofjo281@student.liu.se"), 
+            person("Henrik", "Olofsson", 
+                    role = "aut", 
+                    email = "henol528@student.liu.se"))
+Author: Sofie Jörgensen,
+        Henrik Olofsson
+Maintainer: Sofie Jörgensen <sofjo281@student.liu.se>, 
+            Henrik Olofsson <henol528@student.liu.se>
+Description: The function \code{linreg} takes a formula object and a 
+             \code{data.frame} as arguments, and returns an object as an S3 class. 
+              It performs ordinary least squares to calculate different statistics. 
+Depends: R (>= 4.0.0)
 Suggests: 
     ggplot2,
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 RoxygenNote: 7.1.1
 Encoding: UTF-8
+License: GPL
+VignetteBuilder: knitr

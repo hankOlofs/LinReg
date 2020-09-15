@@ -1,0 +1,39 @@
+---
+title: "my_vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my_vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(LinReg)
+```
+
+This vignette is a documentation of how to use the \code{LinReg} package. 
+For this purpose, we will use the \code{mtcars} data set.
+
+(In progress...)
+
+# Fitting a Linear Regression Model
+We use the \code{mtcars} data set. In this example, we are interested to 
+investigate the impact of weight (1000 lbs) and number of cylinders on 
+Miles/(US) gallon, for cars in the \code{mtcars} data set. Thus, the independent
+variables are \code{wt} and \code{cyl} and the dependent variable is \code{mpg},
+and can be expressed as $\text{mpg} \sim \text{wt} + \text{cyl}$.
+
+A linear regression model is fit by using
+```{r}
+data(mtcars)
+model <- linreg(formula = mpg ~ wt + cyl, data = mtcars )
+
+```
+

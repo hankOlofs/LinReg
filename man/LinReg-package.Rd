@@ -3,32 +3,35 @@
 \alias{LinReg}
 \docType{package}
 \title{
-\packageTitle{LinReg}
-}
+\packageTitle{LinReg}}
 \description{
-\packageDescription{LinReg}
-}
+\packageDescription{LinReg}}
 \details{
 
 The DESCRIPTION file:
 \packageDESCRIPTION{LinReg}
 \packageIndices{LinReg}
-~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
 \packageAuthor{LinReg}
 
-Maintainer: \packageMaintainer{LinReg}
-}
-\references{
-~~ Literature or other references for background information ~~
-}
+Maintainer: \packageMaintainer{LinReg}}
+\references{}
 
 \keyword{ package }
-\seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-}
+
 \examples{
-~~ simple examples of the most important functions ~~
+# Example data
+data(mtcars)
+
+# Fitting a linear regression model
+model <- linreg(formula = mpg ~ wt + cyl, data = mtcars)
+
+# Result
+print(model)
+plot(model)
+resid(model)
+pred(model)
+coef(model)
+summary(model)
 }

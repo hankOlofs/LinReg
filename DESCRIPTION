@@ -6,7 +6,9 @@ Date: 2020-09-15
 Author: Who wrote it
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
-License: What license is it under?
+License: GPL
 Suggests: 
     ggplot2,
     testthat
+RoxygenNote: 7.1.1
+Encoding: UTF-8

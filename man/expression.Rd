@@ -1,9 +1,7 @@
 \name{expression}
 \alias{expression}
 \docType{data}
-\title{
-%%   ~~ data name/kind ... ~~
-}
+\title{expression}
 \description{
 %%  ~~ A concise (1-5 lines) description of the dataset. ~~
 }

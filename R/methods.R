@@ -1,6 +1,15 @@
 
 # print method
-print.LinReg <- function(x, ...) {
+#' Print for linreg class
+#'
+#' @param x 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+print.linreg <- function(x, ...) {
   formula <- x$formula
   cat("\n\nCall: \n")
   writeLines(paste("linreg(formula = ", 
@@ -16,35 +25,22 @@ print.LinReg <- function(x, ...) {
 }
 
 # plot method
-plot.LinReg <- function(x, ...) {
+#' Plot linreg class
+#'
+#' @param x 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot.linreg <- function(x, ...) {
   f <- x$formula
   
   d1 <- data.frame(x$fits, x$resid)
   names(d1) <- c("Fits", "Residuals")
   d2 <- data.frame(x$fits, sqrt(abs(x$resid/sqrt(x$resid_var))))
   names(d2) <- c("Fits", "Standardized_residuals")
-  ## Tried making a function out of the plotting, which does not seem to work properly as of now
-  
-  # resplot <- function(data, title) {
-  #   p <- ggplot(data = data, aes(data[,1], data[,2])) +
-  #     geom_point(shape = 1, size = 3) +
-  #     stat_summary_bin(fun = median,
-  #                      aes(group = 1),
-  #                      geom = "line",
-  #                      colour = "red") +
-  #     ggtitle(title)
-  #   
-  #   p + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
-  # }
-  # 
-  # resplot(data = d1, title = "Residuals vs Fitted")
-  # resplot(data = d2, title = "Standardized residuals vs Fitted")
-  
-  # strategy: create a new column in dataframe indicating whether an observation
-  # is an outlier (create a function)
-  # then, plot only non-outliers as points and use only non-outliers to calc median
-  # finally, add the outliers as geom_points and include label=rownames([data])
-  # also, adjust the axis labels (x axis should include formula)
   
   outliers_d1 <- boxplot.stats(d1[,2])$out
   cond_d1 <- d1[,2] == outliers_d1
@@ -53,9 +49,6 @@ plot.LinReg <- function(x, ...) {
   d2$outliers <- 0
   d2$outliers <- ifelse(cond_d1, 1, 0)
   print(d1)
-  
-  # d1$out <- NA
-  # d1[d1[,2] %in% outliers, ] <- 1
   
   ### Plot 1
   p1 <- ggplot(data = d1[-cond_d1,], aes(Fits, Residuals)) +
@@ -88,22 +81,59 @@ plot.LinReg <- function(x, ...) {
 }
 
 # resid method
-residuals.LinReg <- function(object, ...) {
+#' Residuals for linreg class
+#'
+#' @param object 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+residuals.linreg <- function(object, ...) {
   print(as.vector(object$resid))
 }
 
 # pred method
 # works for predict() but not pred()
+
+#' Prediction caller
+#'
+#' @param x 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 pred <- function(x, ...) {
   predict(x, ...)
 }
 
-pred.LinReg <- function(object, ...) {
+#' Predictions for linreg class
+#'
+#' @param object 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+predict.linreg <- function(object, ...) {
   print(as.vector(object$fits))
 }
 
 # coef method
-coef.LinReg <- function(object, ...) {
+#' Coefficients for linreg class
+#'
+#' @param object 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+coef.linreg <- function(object, ...) {
   obj <- object$coef
   names(obj) <- colnames(object$X)
   print(obj)
@@ -112,7 +142,16 @@ coef.LinReg <- function(object, ...) {
 # summary method
 # present the coefficients with their...
 # standard error, t-value and p-value as well as the estimate of σˆ and df in the model.
-summary.LinReg <- function(object, ...) {
+#' Summary for linreg class
+#'
+#' @param object 
+#' @param ... 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+summary.linreg <- function(object, ...) {
   formula <- object$formula
   cat("\n\nCall: \n")
   writeLines(paste("linreg(formula = ", 

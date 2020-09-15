@@ -7,6 +7,15 @@
 
 #library(ggplot2)
 
+#' Linear regression
+#'
+#' @param formula 
+#' @param data 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 linreg <- function(formula, data) {
   stopifnot("Formula object is not valid" = class(formula) == "formula")
   stopifnot("Formula object is not valid" = is.data.frame(data))
@@ -63,6 +72,6 @@ linreg <- function(formula, data) {
                      t_val = t,
                      p_val = pt
   )
-  return(structure(statistics, class = "LinReg"))
+  return(structure(statistics, class = "linreg"))
 }
 

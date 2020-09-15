@@ -2,7 +2,7 @@
 \alias{test1}
 \docType{data}
 \title{
-%%   ~~ data name/kind ... ~~
+Test data set
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of the dataset. ~~

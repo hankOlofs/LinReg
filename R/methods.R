@@ -42,42 +42,40 @@ plot.linreg <- function(x, ...) {
   d2 <- data.frame(x$fits, sqrt(abs(x$resid/sqrt(x$resid_var))))
   names(d2) <- c("Fits", "Standardized_residuals")
   
-  outliers_d1 <- boxplot.stats(d1[,2])$out
-  cond_d1 <- d1[,2] == outliers_d1
-  d1$outliers <- 0
-  d1$outliers <- ifelse(cond_d1, 1, 0)
-  d2$outliers <- 0
-  d2$outliers <- ifelse(cond_d1, 1, 0)
-  print(d1)
+  iqr <- IQR(d1$Residuals)
+  d1$outliers <- ifelse((d1$Residuals > as.numeric(quantile(d1$Residuals)[4] + iqr*1.5)) | (d1$Residuals < as.numeric(quantile(d1$Residuals)[2] - iqr*1.5)),1,0)
+  d2$outliers <- d1$outliers
   
-  ### Plot 1
-  p1 <- ggplot(data = d1[-cond_d1,], aes(Fits, Residuals)) +
-    geom_point(shape = 1, size = 3) +
-    stat_summary(data = d1[d1$outliers == 0,], fun = mean,
-                 aes(group = 1),
-                 geom = "line",
-                 colour = "red") +
-    geom_point(data = d1[cond_d1,], shape = 1, size = 3) +
-    geom_text(data = d1[d1$outliers>0,], aes(label = rownames(d1[d1$outliers>0,])), hjust = 1.2) + 
-    geom_hline(yintercept = 0, linetype = "dotted", colour = "gray") +
-    ggtitle("Residuals vs Fitted")
+  # Diagostics:
+  # print(as.numeric(quantile(d1$Residuals)[4] + iqr*1.5))
+  # print(as.numeric(quantile(d1$Residuals)[2] - iqr*1.5))
+  # print(head(d1))
   
-  print(p1 + theme_bw() + theme(plot.title = element_text(hjust = 0.5)))
+  ### Plotting function
+  plot_fun <- function(data, title="Title") {
+    p <-
+      ggplot(data = data[data$outliers == 0, ], aes_string(names(data)[1], names(data)[2])) +
+      geom_point(shape = 1, size = 3) +
+      stat_summary(
+        data = data[data$outliers == 0, ],
+        fun = mean,
+        aes(group = 1),
+        geom = "line",
+        colour = "red"
+      ) +
+      # a smooth line makes more sense than the straight lines of the lab example
+      geom_smooth(data = data[data$outliers == 0, ], method = "loess") +
+      geom_point(data = data[data$outliers == 1,], shape = 1, size = 3) +
+      geom_text(data = data[data$outliers == 1,], aes(label = rownames(data[data$outliers>0,])), hjust = 1.2) + 
+      geom_hline(yintercept = 0, linetype = "dotted", colour = "gray") +
+      ggtitle(title)
+    
+    print(p + theme_bw() + theme(plot.title = element_text(hjust = 0.5)))
+  }
   
-  ### Plot 2
-  p2 <- ggplot(data = d2[-cond_d1,], aes(Fits, Standardized_residuals)) +
-    geom_point(shape = 1, size = 3) +
-    stat_summary(data = d2[d1$outliers == 0,], fun = mean,
-                 aes(group = 1),
-                 geom = "line",
-                 colour = "red") +
-    geom_point(data = d2[cond_d1,], shape = 1, size = 3) +
-    geom_text(data = d2[d1$outliers>0,], aes(label = rownames(d2[d1$outliers>0,])), hjust = 1.2) + 
-    geom_hline(yintercept = 0, linetype = "dotted", colour = "gray") +
-    ggtitle("Standardized residuals vs Fitted")
-  
-  print(p2 + theme_bw() + theme(plot.title = element_text(hjust = 0.5)))
-  
+  # calling the plot_fun
+  plot_fun(data = d1, title="Residuals vs Fitted")
+  plot_fun(data = d2, title="Scale-Location")
 }
 
 # resid method

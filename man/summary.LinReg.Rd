@@ -17,3 +17,6 @@
 \description{
 Summary for linreg class
 }
+\examples{
+
+}

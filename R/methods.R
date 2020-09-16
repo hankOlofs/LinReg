@@ -195,14 +195,14 @@ summary.linreg <- function(object, ...) {
             round(object$coef[1], 4),
             round(sqrt(object$coef_var[1]), 4),
             round(object$t_val[1], 4),
-            round(object$p_val[1], 10)))
+            round(object$p_val[1], 10),sep = " "))
   
-  # Added "test" so the residual line fails
+
   writeLines(paste("Residual standard error: ",
                    signif(sqrt(object$resid_var), 3),
                    " on ",
                    object$df,
-                   " degrees of freedotestm ",
+                   " degrees of freedom ",
                    sep = ""))
 }
 

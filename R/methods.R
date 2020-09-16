@@ -191,11 +191,16 @@ coef.linreg <- function(object, ...) {
 summary.linreg <- function(object, ...) {
   # p value is not in test-linreg?
   # intercept values
-  writeLines(paste(colnames(object$X)[1],
-            round(object$coef[1], 4),
-            round(sqrt(object$coef_var[1]), 4),
-            round(object$t_val[1], 4),
-            round(object$p_val[1], 10),sep = " "))
+  writeLines(paste("\t", colnames(object$X)[1],
+                   "\t",
+            round(object$coef[1], 2),
+            "\t",
+            round(sqrt(object$coef_var[1]), 2),
+            "\t",
+            round(object$t_val[1], 2),
+            "\t",
+            signif(object$p_val[1], 10),
+            "\t" ,sep = " "))
   
 
   writeLines(paste("Residual standard error: ",

@@ -152,57 +152,56 @@ coef.linreg <- function(object, ...) {
 #'
 #' @examples
 #' 
-# summary.linreg <- function(object, ...) {
-#   formula <- object$formula
-#   cat("\n\nCall: \n")
-#   writeLines(paste("linreg(formula = ",
-#                    capture.output(print(formula)),
-#                    ", data = ",
-#                    capture.output(print(object$data_name)),
-#                    ")",
-#                    sep = ""))
-#   cat("\nResiduals: \n")
-#   q <- data.frame(Min = round(quantile(object$resid, names = FALSE), 4)[1],
-#                   Q1 = round(quantile(object$resid, names = FALSE), 4)[2],
-#                   Median = round(quantile(object$resid, names = FALSE), 4)[3],
-#                   Q3 = round(quantile(object$resid, names = FALSE), 4)[4],
-#                   Max = round(quantile(object$resid, names = FALSE), 4)[5])
-#   rownames(q) <- c("")
-#   print(q)
-# 
-#   cat("\nCoefficients: \n")
-#   obj <- object$coef
-#   names(obj) <- colnames(object$X)
-#   # Create table as a data.frame
-#   print(data.frame(Estimate = round(object$coef, 4),
-#                    StdError = round(sqrt(object$coef_var), 4),
-#                    tvalue = round(object$t_val, 4),
-#                    pvalue = signif(object$p_val, 4)))
-#   cat("---\n")
-#   writeLines(paste("Residual standard error: ",
-#                    signif(sqrt(object$resid_var), 3),
-#                    " on ",
-#                    object$df,
-#                    " degrees of freedom ",
-#                    sep = ""))
-# }
-
-
 summary.linreg <- function(object, ...) {
-  # p value is not in test-linreg?
-  # intercept values
-  writeLines(paste("\t", colnames(object$X)[1],
-                   "\t",
-            round(object$coef[1], 2),
-            "\t",
-            round(sqrt(object$coef_var[1]), 2),
-            "\t",
-            round(object$t_val[1], 2),
-            "\t",
-            signif(object$p_val[1], 10),
-            "\t" ,sep = " "))
-  
+  formula <- object$formula
+  cat("\n\nCall: \n")
+  writeLines(paste("linreg(formula = ",
+                   capture.output(print(formula)),
+                   ", data = ",
+                   capture.output(print(object$data_name)),
+                   ")",
+                   sep = ""))
+  cat("\nResiduals: \n")
+  q <- data.frame(Min = round(quantile(object$resid, names = FALSE), 4)[1],
+                  Q1 = round(quantile(object$resid, names = FALSE), 4)[2],
+                  Median = round(quantile(object$resid, names = FALSE), 4)[3],
+                  Q3 = round(quantile(object$resid, names = FALSE), 4)[4],
+                  Max = round(quantile(object$resid, names = FALSE), 4)[5])
+  rownames(q) <- c("")
+  print(q)
 
+  cat("\nCoefficients: \n")
+  obj <- object$coef
+  names(obj) <- colnames(object$X)
+  
+  codes <- function(x) {
+    if(x >= 0.1){
+      code <- " "
+    }else if(x < 0.1 & x > 0.05){
+      code <- "."
+    }else if(x < 0.05 & x >= 0.01){
+      code <- "*"
+    }else if(x < 0.01 & x >= 0.001){
+      code <- "**"
+    }else if(x < 0.001 & x >= 0){
+      code <- "***" 
+    }
+    return(code)
+  }
+  
+  signif_codes <- sapply(object$p_val,codes)
+  
+  
+  # Create table as a data.frame
+  df <- data.frame(Estimate = round(object$coef, 5),
+                   `Std Error` = round(sqrt(object$coef_var), 5),
+                   `t value` = round(object$t_val, 3),
+                   `p value` = signif(object$p_val, 10),
+                   `Signif. code` = signif_codes)
+  colnames(df) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)", " ")
+  print(df)
+  cat("---\n")
+  cat("Signif.codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 \n\n")
   writeLines(paste("Residual standard error: ",
                    signif(sqrt(object$resid_var), 3),
                    " on ",
@@ -210,6 +209,7 @@ summary.linreg <- function(object, ...) {
                    " degrees of freedom ",
                    sep = ""))
 }
+
 
 # TEST by using mtcars
 data(mtcars)
@@ -234,3 +234,23 @@ summary(linreg_mod)
 lm_mod <- lm(Petal.Length~Sepal.Width+Sepal.Length, data=iris)
 summary(lm_mod)
 
+# 
+# b <- c(0.1,0.001,0.00001,0.05)
+# s <- function(b) {
+#   if(b >= 0.1){
+#     a <- " "
+#   }else if(b < 0.1 & b > 0.05){
+#     a <- "."
+#   }else if(b < 0.05 & b >= 0.01){
+#     a <- "*"
+#   }else if(b < 0.01 & b >= 0.001){
+#     a <- "**"
+#   }else if(b < 0.001 & b >= 0){
+#     a <- "***" 
+#   }
+#   return(a)
+# }
+# 
+# signif_codes <- sapply(b,s)
+# 
+# a

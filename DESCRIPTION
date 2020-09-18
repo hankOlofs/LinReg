@@ -1,4 +1,4 @@
-Package: LinReg
+Package: linreg
 Type: Package
 Title: Fitting Linear Regression Models
 Version: 0.1

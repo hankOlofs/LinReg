@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(LinReg)
+library(linreg)
 ```
 
 This vignette is a documentation of how to use the \code{LinReg} package. 

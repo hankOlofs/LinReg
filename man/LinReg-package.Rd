@@ -1,21 +1,21 @@
-\name{LinReg-package}
-\alias{LinReg-package}
-\alias{LinReg}
+\name{linreg-package}
+\alias{linreg-package}
+\alias{linreg}
 \docType{package}
 \title{
-\packageTitle{LinReg}}
+\packageTitle{linreg}}
 \description{
-\packageDescription{LinReg}}
+\packageDescription{linreg}}
 \details{
 
 The DESCRIPTION file:
-\packageDESCRIPTION{LinReg}
-\packageIndices{LinReg}
+\packageDESCRIPTION{linreg}
+\packageIndices{linreg}
 }
 \author{
-\packageAuthor{LinReg}
+\packageAuthor{linreg}
 
-Maintainer: \packageMaintainer{LinReg}}
+Maintainer: \packageMaintainer{linreg}}
 \references{}
 
 \keyword{ package }

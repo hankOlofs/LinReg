@@ -31,6 +31,7 @@ print.linreg <- function(x, ...) {
 #' @param ... 
 #'
 #' @return
+#' @importFrom ggplot2 ggplot aes geom_point stat_summary geom_smooth geom_text geom_hline ggtitle
 #' @export
 #'
 #' @examples
@@ -211,25 +212,25 @@ summary.linreg <- function(object, ...) {
 }
 
 
-# TEST by using mtcars
-data(mtcars)
-expression <- mpg ~ wt + cyl
-test1 <- linreg(expression, mtcars)
-print(test1)
-#plot()
-resid(test1)
-coef(test1)
-predict(test1)
-summary(test1)
-
-
-
-# TEST by using iris
-data("iris")
-
-linreg_mod <- linreg(Petal.Length~Sepal.Width+Sepal.Length, data=iris)
-summary(linreg_mod)
-
-
-lm_mod <- lm(Petal.Length~Sepal.Width+Sepal.Length, data=iris)
-summary(lm_mod)
+# # TEST by using mtcars
+# data(mtcars)
+# expression <- mpg ~ wt + cyl
+# test1 <- linreg(expression, mtcars)
+# print(test1)
+# #plot()
+# resid(test1)
+# coef(test1)
+# predict(test1)
+# summary(test1)
+# 
+# 
+# 
+# # TEST by using iris
+# data("iris")
+# 
+# linreg_mod <- linreg(Petal.Length~Sepal.Width+Sepal.Length, data=iris)
+# summary(linreg_mod)
+# 
+# 
+# lm_mod <- lm(Petal.Length~Sepal.Width+Sepal.Length, data=iris)
+# summary(lm_mod)

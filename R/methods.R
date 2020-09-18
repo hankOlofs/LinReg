@@ -2,8 +2,8 @@
 # print method
 #' Print for linreg class
 #'
-#' @param x 
-#' @param ... 
+#' @param x a linreg class object
+#' @param ... optional arguments to pass to generic
 #'
 #' @return
 #' @export
@@ -30,8 +30,8 @@ print.linreg <- function(x, ...) {
 # plot method
 #' Plot linreg class
 #'
-#' @param x 
-#' @param ... 
+#' @param x a linreg class object
+#' @param ... optional arguments to pass to generic
 #'
 #' @return
 #' @export
@@ -91,8 +91,8 @@ plot.linreg <- function(x, ...) {
 # resid method
 #' Residuals for linreg class
 #'
-#' @param object 
-#' @param ... 
+#' @param object a linreg class object
+#' @param ... optional arguments to pass to generic
 #'
 #' @return
 #' @export
@@ -110,8 +110,8 @@ residuals.linreg <- function(object, ...) {
 
 #' Prediction caller
 #'
-#' @param x 
-#' @param ... 
+#' @param x a linreg class object
+#' @param ... optional arguments to pass to generic
 #'
 #' @return
 #' @export
@@ -126,8 +126,8 @@ pred <- function(x, ...) {
 
 #' Predictions for linreg class
 #'
-#' @param object 
-#' @param ... 
+#' @param object a linreg class object
+#' @param ... optional arguments to pass to generic
 #'
 #' @return
 #' @export
@@ -143,8 +143,8 @@ predict.linreg <- function(object, ...) {
 # coef method
 #' Coefficients for linreg class
 #'
-#' @param object 
-#' @param ... 
+#' @param object a linreg class object
+#' @param ... optional arguments to pass to generic
 #'
 #' @return
 #' @export
@@ -164,8 +164,8 @@ coef.linreg <- function(object, ...) {
 # standard error, t-value and p-value as well as the estimate of σˆ and df in the model.
 #' Summary for linreg class
 #'
-#' @param object 
-#' @param ... 
+#' @param object a linreg class object
+#' @param ... optional arguments to pass to generic
 #'
 #' @return
 #' @export

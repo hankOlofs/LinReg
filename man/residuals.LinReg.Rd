@@ -7,9 +7,9 @@
 \method{residuals}{linreg}(object, ...)
 }
 \arguments{
-\item{object}{}
+\item{object}{a linreg class object}
 
-\item{...}{}
+\item{...}{optional arguments to pass to generic}
 }
 \value{
 

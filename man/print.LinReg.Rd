@@ -7,9 +7,9 @@
 \method{print}{linreg}(x, ...)
 }
 \arguments{
-\item{x}{}
+\item{x}{a linreg class object}
 
-\item{...}{}
+\item{...}{optional arguments to pass to generic}
 }
 \value{
 

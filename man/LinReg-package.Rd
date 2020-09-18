@@ -1,6 +1,5 @@
 \name{linreg-package}
 \alias{linreg-package}
-\alias{linreg}
 \docType{package}
 \title{
 \packageTitle{linreg}}

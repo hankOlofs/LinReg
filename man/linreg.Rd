@@ -7,9 +7,9 @@
 linreg(formula, data)
 }
 \arguments{
-\item{formula}{}
+\item{formula}{a formula, like y~x}
 
-\item{data}{}
+\item{data}{a data frame}
 }
 \value{
 

@@ -17,3 +17,8 @@ linreg(formula, data)
 \description{
 Linear regression
 }
+\examples{
+data(mtcars)
+model <- linreg(mpg~wt+cyl, mtcars)
+model
+}

@@ -17,3 +17,8 @@
 \description{
 Residuals for linreg class
 }
+\examples{
+data(mtcars)
+model <- linreg(mpg~wt+cyl, mtcars)
+resid(model)
+}

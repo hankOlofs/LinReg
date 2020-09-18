@@ -17,3 +17,8 @@ pred(x, ...)
 \description{
 Prediction caller
 }
+\examples{
+data(mtcars)
+model <- linreg(mpg~wt+cyl, mtcars)
+pred(model)
+}

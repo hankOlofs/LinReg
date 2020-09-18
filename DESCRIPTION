@@ -25,5 +25,5 @@ Suggests:
 Imports: ggplot2 (=> 3.3.0)
 RoxygenNote: 7.1.1
 Encoding: UTF-8
-License: GPL
+License: GPL-3
 VignetteBuilder: knitr

@@ -223,7 +223,7 @@ summary.linreg <- function(object, ...) {
   colnames(df) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)", " ")
   print(df)
   cat("---\n")
-  cat("Signif.codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 \n\n")
+  cat("Signif.codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 \n\n")
   writeLines(paste("Residual standard error: ",
                    signif(sqrt(object$resid_var), 3),
                    " on ",

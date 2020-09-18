@@ -16,6 +16,10 @@
 #' @export
 #'
 #' @examples
+#' data(mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars)
+#' model
+
 linreg <- function(formula, data) {
   stopifnot("Formula object is not valid" = class(formula) == "formula")
   stopifnot("Formula object is not valid" = is.data.frame(data))

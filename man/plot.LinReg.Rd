@@ -17,3 +17,8 @@
 \description{
 Plot linreg class
 }
+\examples{
+data(mtcars)
+model <- linreg(mpg~wt+cyl, mtcars)
+plot(model)
+}

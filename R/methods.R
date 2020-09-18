@@ -8,7 +8,10 @@
 #' @return
 #' @export
 #'
-#' @examples
+#' @examples 
+#' data(mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars)
+#' print(model)
 print.linreg <- function(x, ...) {
   formula <- x$formula
   cat("\n\nCall: \n")
@@ -35,6 +38,9 @@ print.linreg <- function(x, ...) {
 #' @export
 #'
 #' @examples
+#' data(mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars)
+#' plot(model)
 plot.linreg <- function(x, ...) {
   f <- x$formula
   
@@ -91,6 +97,9 @@ plot.linreg <- function(x, ...) {
 #' @export
 #'
 #' @examples
+#' data(mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars)
+#' resid(model)
 residuals.linreg <- function(object, ...) {
   print(as.vector(object$resid))
 }
@@ -107,6 +116,9 @@ residuals.linreg <- function(object, ...) {
 #' @export
 #'
 #' @examples
+#' data(mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars)
+#' pred(model)
 pred <- function(x, ...) {
   predict(x, ...)
 }
@@ -120,6 +132,9 @@ pred <- function(x, ...) {
 #' @export
 #'
 #' @examples
+#' data(mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars)
+#' pred(model)
 predict.linreg <- function(object, ...) {
   print(as.vector(object$fits))
 }
@@ -134,6 +149,9 @@ predict.linreg <- function(object, ...) {
 #' @export
 #'
 #' @examples
+#' data(mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars)
+#' coef(model)
 coef.linreg <- function(object, ...) {
   obj <- object$coef
   names(obj) <- colnames(object$X)
@@ -152,7 +170,9 @@ coef.linreg <- function(object, ...) {
 #' @export
 #'
 #' @examples
-#' 
+#' data(mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars)
+#' summary(model)
 summary.linreg <- function(object, ...) {
   formula <- object$formula
   cat("\n\nCall: \n")
@@ -210,27 +230,3 @@ summary.linreg <- function(object, ...) {
                    " degrees of freedom ",
                    sep = ""))
 }
-
-
-# # TEST by using mtcars
-# data(mtcars)
-# expression <- mpg ~ wt + cyl
-# test1 <- linreg(expression, mtcars)
-# print(test1)
-# #plot()
-# resid(test1)
-# coef(test1)
-# predict(test1)
-# summary(test1)
-# 
-# 
-# 
-# # TEST by using iris
-# data("iris")
-# 
-# linreg_mod <- linreg(Petal.Length~Sepal.Width+Sepal.Length, data=iris)
-# summary(linreg_mod)
-# 
-# 
-# lm_mod <- lm(Petal.Length~Sepal.Width+Sepal.Length, data=iris)
-# summary(lm_mod)

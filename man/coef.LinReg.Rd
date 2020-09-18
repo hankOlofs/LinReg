@@ -17,3 +17,8 @@
 \description{
 Coefficients for linreg class
 }
+\examples{
+data(mtcars)
+model <- linreg(mpg~wt+cyl, mtcars)
+coef(model)
+}

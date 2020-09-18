@@ -9,8 +9,8 @@
 
 #' Linear regression
 #'
-#' @param formula 
-#' @param data 
+#' @param formula a formula, like y~x
+#' @param data a data frame
 #'
 #' @return
 #' @export

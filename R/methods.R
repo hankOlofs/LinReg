@@ -230,4 +230,5 @@ summary.linreg <- function(object, ...) {
                    object$df,
                    " degrees of freedom ",
                    sep = ""))
+  
 }

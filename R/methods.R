@@ -36,7 +36,7 @@ print.linreg <- function(x, ...) {
 #' @return
 #' @export
 #' 
-#' @importFrom ggplot2 ggplot aes geom_point aes_string stat_summary geom_smooth geom_text geom_hline ggtitle theme
+#' @importFrom ggplot2 ggplot aes geom_point aes_string stat_summary geom_smooth geom_text geom_hline ggtitle theme element_text
 #'
 #' @examples
 #' data(mtcars)

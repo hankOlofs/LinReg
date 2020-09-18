@@ -34,8 +34,7 @@ print.linreg <- function(x, ...) {
 #' @param ... 
 #'
 #' @return
-#' @importFrom ggplot2 ggplot aes geom_point aes_string stat_summary geom_smooth geom_text geom_hline ggtitle theme_bw theme
-#' @export
+#' @importFrom ggplot2 ggplot aes geom_point aes_string stat_summary geom_smooth geom_text geom_hline ggtitle theme
 #'
 #' @examples
 #' data(mtcars)
@@ -79,7 +78,7 @@ plot.linreg <- function(x, ...) {
       geom_hline(yintercept = 0, linetype = "dotted", colour = "gray") +
       ggtitle(title)
     
-    print(p + theme_bw() + theme(plot.title = element_text(hjust = 0.5)))
+    print(p + theme(plot.title = element_text(hjust = 0.5)))
   }
   
   # calling the plot_fun

@@ -233,24 +233,3 @@ summary(linreg_mod)
 
 lm_mod <- lm(Petal.Length~Sepal.Width+Sepal.Length, data=iris)
 summary(lm_mod)
-
-# 
-# b <- c(0.1,0.001,0.00001,0.05)
-# s <- function(b) {
-#   if(b >= 0.1){
-#     a <- " "
-#   }else if(b < 0.1 & b > 0.05){
-#     a <- "."
-#   }else if(b < 0.05 & b >= 0.01){
-#     a <- "*"
-#   }else if(b < 0.01 & b >= 0.001){
-#     a <- "**"
-#   }else if(b < 0.001 & b >= 0){
-#     a <- "***" 
-#   }
-#   return(a)
-# }
-# 
-# signif_codes <- sapply(b,s)
-# 
-# a

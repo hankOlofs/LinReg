@@ -18,7 +18,6 @@ Description: The function \code{linreg} takes a formula object and a
               It performs ordinary least squares to calculate different statistics. 
 Depends: R (>= 4.0.0)
 Suggests: 
-    ggplot2,
     testthat,
     knitr,
     rmarkdown,

@@ -15,12 +15,23 @@
 print.linreg <- function(x, ...) {
   formula <- x$formula
   cat("\n\nCall: \n")
-  writeLines(paste("linreg(formula = ", 
-                   capture.output(print(formula)),
-                   ", data = ",
-                   capture.output(print(x$data_name)),
-                   ")",
-                   sep = ""))
+  if(x$QR == TRUE){
+    writeLines(paste("linreg(formula = ",
+                     capture.output(print(formula)),
+                     ", data = ",
+                     capture.output(print(x$data_name)),
+                     ", QR = TRUE)",
+                     sep = ""))
+  }
+  else{
+    writeLines(paste("linreg(formula = ",
+                     capture.output(print(formula)),
+                     ", data = ",
+                     capture.output(print(x$data_name)),
+                     ")",
+                     sep = ""))
+  }
+  
   cat("\nCoefficients: \n")
   obj <- x$coef
   names(obj) <- colnames(x$X)
@@ -177,12 +188,23 @@ coef.linreg <- function(object, ...) {
 summary.linreg <- function(object, ...) {
   formula <- object$formula
   cat("\n\nCall: \n")
-  writeLines(paste("linreg(formula = ",
-                   capture.output(print(formula)),
-                   ", data = ",
-                   capture.output(print(object$data_name)),
-                   ")",
-                   sep = ""))
+  if(object$QR == TRUE){
+    writeLines(paste("linreg(formula = ",
+                     capture.output(print(formula)),
+                     ", data = ",
+                     capture.output(print(object$data_name)),
+                     ", QR = TRUE)",
+                     sep = ""))
+  }
+  else{
+    writeLines(paste("linreg(formula = ",
+                     capture.output(print(formula)),
+                     ", data = ",
+                     capture.output(print(object$data_name)),
+                     ")",
+                     sep = ""))
+  }
+
   cat("\nResiduals: \n")
   q <- data.frame(Min = round(quantile(object$resid, names = FALSE), 4)[1],
                   Q1 = round(quantile(object$resid, names = FALSE), 4)[2],
@@ -213,7 +235,6 @@ summary.linreg <- function(object, ...) {
   
   signif_codes <- sapply(object$p_val,codes)
   
-  
   # Create table as a data.frame
   df <- data.frame(Estimate = round(object$coef, 5),
                    `Std Error` = round(sqrt(object$coef_var), 5),
@@ -221,6 +242,7 @@ summary.linreg <- function(object, ...) {
                    `p value` = signif(object$p_val, 10),
                    `Signif. code` = signif_codes)
   colnames(df) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)", " ")
+  rownames(df) <- colnames(object$X)
   print(df)
   cat("---\n")
   cat("Signif.codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 \n\n")

@@ -4,7 +4,7 @@
 \alias{linreg}
 \title{Linear regression}
 \usage{
-linreg(formula, data)
+linreg(formula, data, QR = FALSE)
 }
 \arguments{
 \item{formula}{a formula, like y~x}

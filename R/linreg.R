@@ -20,7 +20,7 @@
 #' model <- linreg(mpg~wt+cyl, mtcars)
 #' model
 
-linreg <- function(formula, data) {
+linreg <- function(formula, data, QR = FALSE) {
   stopifnot("Formula object is not valid" = class(formula) == "formula")
   stopifnot("Formula object is not valid" = is.data.frame(data))
   # stopifnot(all.vars(formula) %in% which(classes == "numeric")) # add a check to make sure all variables in the formula are numeric
@@ -37,8 +37,60 @@ linreg <- function(formula, data) {
   # Create the dependent variable y 
   y <- sub_data[1]
   
-  # Regressions coefficients:
-  beta_hat <- as.vector(solve(t(X) %*% X) %*% t(X) %*% as.matrix(y))
+  # Number of observations
+  n <- nrow(X)
+  
+  # Number of parameters
+  p <- ncol(X)
+  
+  if(QR == FALSE){
+    # Regressions coefficients:
+    beta_hat <- as.vector(solve(t(X) %*% X) %*% t(X) %*% as.matrix(y))
+    }
+  else{
+    # QR decomposition
+    # Check whether the linear system is underdetermined or overdetermined
+    if(n < p){
+      X <- t(X)
+      p <- ncol(X)
+      # Number of observations
+      n <- nrow(X)
+      underdetermined <- TRUE
+    }
+    else{
+      underdetermined <- FALSE
+      }
+    # List for all Household reflection matrices H_1...H_p
+    H <- list()
+    A <- X
+    # Create p Householder reflection matrices
+    for(i in 1:p){
+      A2 <- A[i:n,i:p]
+      I <- diag(x = 1, nrow = n, ncol = n)
+      v <- as.matrix(A2)[,1]
+      # Euclidean norm ||X||_2
+      norm_2 <- sqrt(sum(v^2))
+      # Compute v 
+      v[1] <- v[1] + sign(v[1]) %*% norm_2
+      # Compute i:th Household reflection matrix
+      I[i:n,i:n] <- diag(x = 1, nrow = n - i + 1, ncol = n - i + 1) - 2 * (v%*%t(v)/as.vector(t(v)%*%v))
+      H[[i]] <- I
+      # Update matrix
+      A <-   H[[i]] %*% A 
+      # Put elements to zero if near zero
+      A[abs(A)< 1e-14] <- 0 
+    }
+    Q <- Reduce("%*%", H)[,1:p]
+    R <- A[1:p,]
+    
+    if(underdetermined == TRUE){
+      res <- forwardsolve(t(R), unlist(y, use.names = FALSE))
+      beta_hat <- as.vector(Q %*% (c(res , rep(0, (ncol(Q)-length(res))))))
+    }else{
+      res <- t(Q) %*% unlist(y, use.names = FALSE)
+      beta_hat <- as.vector(backsolve(R , res))
+    }
+  }
   
   # The fitted values:
   y_hat <- X %*% beta_hat
@@ -47,24 +99,29 @@ linreg <- function(formula, data) {
   e_hat <- as.matrix(y - y_hat)
   
   # The degrees of freedom:
-  n <- nrow(X)
-  p <- ncol(X)
   df <- n - p 
   
   # The residual variance:
   resid_var <- as.vector(t(e_hat) %*%e_hat/df)
   
-  # The variance of the regression coefficients:
-  var_hat <- diag(resid_var * as.matrix(solve(t(X)%*%X)))
+  if(QR == FALSE){
+    # The variance of the regression coefficients:
+    var_hat <- diag(resid_var * as.matrix(solve(t(X)%*%X)))
+  }
+  else{
+    var_hat <- diag(chol2inv(R) * resid_var)
+  }
   
   # The t-values for each coefficient:
   t <- beta_hat/sqrt(var_hat)
   
   # p-value
   pt <- 2*pt(-abs(t), df,lower.tail = TRUE)
+    
   
   statistics <- list(data = data,
                      X = X,
+                     y = y,
                      data_name = substitute(data),
                      formula = formula,
                      coef = beta_hat, 
@@ -74,7 +131,8 @@ linreg <- function(formula, data) {
                      resid_var = resid_var,
                      coef_var = var_hat,
                      t_val = t,
-                     p_val = pt
+                     p_val = pt,
+                     QR = QR
   )
   return(structure(statistics, class = "linreg"))
 }

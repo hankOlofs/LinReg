@@ -24,7 +24,7 @@ Maintainer: \packageMaintainer{linreg}}
 data(mtcars)
 
 # Fitting a linear regression model
-model <- linreg(formula = mpg ~ wt + cyl, data = mtcars)
+model <- linreg(formula = mpg ~ wt + cyl, data = mtcars, QR = FALSE)
 
 # Result
 print(model)

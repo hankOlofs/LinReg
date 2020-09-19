@@ -19,6 +19,6 @@ Summary for linreg class
 }
 \examples{
 data(mtcars)
-model <- linreg(mpg~wt+cyl, mtcars)
+model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 summary(model)
 }

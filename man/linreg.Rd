@@ -10,6 +10,8 @@ linreg(formula, data, QR = FALSE)
 \item{formula}{a formula, like y~x}
 
 \item{data}{a data frame}
+
+\item{QR}{use QR decomposition if TRUE, else OLS}
 }
 \value{
 
@@ -19,6 +21,6 @@ Linear regression
 }
 \examples{
 data(mtcars)
-model <- linreg(mpg~wt+cyl, mtcars)
+model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 model
 }

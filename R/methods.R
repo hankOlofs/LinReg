@@ -10,12 +10,12 @@
 #'
 #' @examples 
 #' data(mtcars)
-#' model <- linreg(mpg~wt+cyl, mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' print(model)
 print.linreg <- function(x, ...) {
   formula <- x$formula
   cat("\n\nCall: \n")
-  if(x$QR == TRUE){
+  if(x$qr == TRUE){
     writeLines(paste("linreg(formula = ",
                      capture.output(print(formula)),
                      ", data = ",
@@ -51,7 +51,7 @@ print.linreg <- function(x, ...) {
 #'
 #' @examples
 #' data(mtcars)
-#' model <- linreg(mpg~wt+cyl, mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' plot(model)
 plot.linreg <- function(x, ...) {
   f <- x$formula
@@ -110,7 +110,7 @@ plot.linreg <- function(x, ...) {
 #'
 #' @examples
 #' data(mtcars)
-#' model <- linreg(mpg~wt+cyl, mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' resid(model)
 residuals.linreg <- function(object, ...) {
   print(as.vector(object$resid))
@@ -129,7 +129,7 @@ residuals.linreg <- function(object, ...) {
 #'
 #' @examples
 #' data(mtcars)
-#' model <- linreg(mpg~wt+cyl, mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' pred(model)
 pred <- function(x, ...) {
   predict(x, ...)
@@ -145,7 +145,7 @@ pred <- function(x, ...) {
 #'
 #' @examples
 #' data(mtcars)
-#' model <- linreg(mpg~wt+cyl, mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' pred(model)
 predict.linreg <- function(object, ...) {
   print(as.vector(object$fits))
@@ -162,7 +162,7 @@ predict.linreg <- function(object, ...) {
 #'
 #' @examples
 #' data(mtcars)
-#' model <- linreg(mpg~wt+cyl, mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' coef(model)
 coef.linreg <- function(object, ...) {
   obj <- object$coef
@@ -183,12 +183,12 @@ coef.linreg <- function(object, ...) {
 #'
 #' @examples
 #' data(mtcars)
-#' model <- linreg(mpg~wt+cyl, mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' summary(model)
 summary.linreg <- function(object, ...) {
   formula <- object$formula
   cat("\n\nCall: \n")
-  if(object$QR == TRUE){
+  if(object$qr == TRUE){
     writeLines(paste("linreg(formula = ",
                      capture.output(print(formula)),
                      ", data = ",

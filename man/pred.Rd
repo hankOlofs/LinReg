@@ -19,6 +19,6 @@ Prediction caller
 }
 \examples{
 data(mtcars)
-model <- linreg(mpg~wt+cyl, mtcars)
+model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 pred(model)
 }

@@ -11,13 +11,14 @@
 #'
 #' @param formula a formula, like y~x
 #' @param data a data frame
+#' @param QR use QR decomposition if TRUE, else OLS
 #'
 #' @return
 #' @export
 #'
 #' @examples
 #' data(mtcars)
-#' model <- linreg(mpg~wt+cyl, mtcars)
+#' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' model
 
 linreg <- function(formula, data, QR = FALSE) {
@@ -132,7 +133,7 @@ linreg <- function(formula, data, QR = FALSE) {
                      coef_var = var_hat,
                      t_val = t,
                      p_val = pt,
-                     QR = QR
+                     qr = QR
   )
   return(structure(statistics, class = "linreg"))
 }

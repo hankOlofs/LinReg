@@ -17,17 +17,17 @@ print.linreg <- function(x, ...) {
   cat("\n\nCall: \n")
   if(x$qr == TRUE){
     writeLines(paste("linreg(formula = ",
-                     capture.output(print(formula)),
+                     utils::capture.output(print(formula)),
                      ", data = ",
-                     capture.output(print(x$data_name)),
+                     utils::capture.output(print(x$data_name)),
                      ", QR = TRUE)",
                      sep = ""))
   }
   else{
     writeLines(paste("linreg(formula = ",
-                     capture.output(print(formula)),
+                     utils::capture.output(print(formula)),
                      ", data = ",
-                     capture.output(print(x$data_name)),
+                     utils::capture.output(print(x$data_name)),
                      ")",
                      sep = ""))
   }
@@ -36,6 +36,43 @@ print.linreg <- function(x, ...) {
   obj <- x$coef
   names(obj) <- colnames(x$X)
   writeLines(paste("\t", capture.output(print(obj)), sep = ""))
+}
+
+#' Colour palette function, simply returning LiU colours
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' liu_col()
+liu_col <- function() {
+  liu_col_vec <- c("#00B9E7","#FF7B53", "#9B97DC", "#17C7D2", "#00CFB5", "#FEF06F", "#7D91A2")
+    return(liu_col_vec)
+}
+
+
+#' Theme with LiU colours
+#'
+#' @return
+#' @export
+#'
+#' @importFrom ggplot2 theme theme_minimal %+replace% element_rect element_blank element_line
+#' 
+#' @examples
+#' data(mtcars)
+#' lm <- linreg(mpg~wt+cyl, data = mtcars)
+#' plot(lm)
+theme_liu <- function() {
+  font <- ""
+  theme_minimal(base_family = font) %+replace%
+    theme(
+      plot.background = element_rect(fill = "#B9EEF1"),
+      panel.background = element_rect(fill = "white", colour = NA),
+      panel.border = element_blank(),
+      panel.grid.major = element_line(colour = "dark gray"),
+      panel.grid.minor = element_blank(),
+      legend.position = "Bottom"
+    )
 }
 
 # plot method
@@ -47,7 +84,7 @@ print.linreg <- function(x, ...) {
 #' @return
 #' @export
 #' 
-#' @importFrom ggplot2 ggplot aes geom_point aes_string stat_summary geom_smooth geom_text geom_hline ggtitle theme element_text
+#' @importFrom ggplot2 ggplot aes geom_point aes_string stat_summary stat_smooth geom_text geom_hline ggtitle theme element_text labs
 #'
 #' @examples
 #' data(mtcars)
@@ -61,37 +98,24 @@ plot.linreg <- function(x, ...) {
   d2 <- data.frame(x$fits, sqrt(abs(x$resid/sqrt(x$resid_var))))
   names(d2) <- c("Fits", "Standardized_residuals")
   
-  iqr <- IQR(d1$Residuals)
+  iqr <- stats::IQR(d1$Residuals)
   d1$outliers <-
-    ifelse((d1$Residuals > as.numeric(quantile(d1$Residuals)[4] + iqr * 1.5)) |
-             (d1$Residuals < as.numeric(quantile(d1$Residuals)[2] - iqr * 1.5)), 1, 0)
+    ifelse((d1$Residuals > as.numeric(stats::quantile(d1$Residuals)[4] + iqr * 1.5)) |
+             (d1$Residuals < as.numeric(stats::quantile(d1$Residuals)[2] - iqr * 1.5)), 1, 0)
   d2$outliers <- d1$outliers
   
-  # Diagostics:
-  # print(as.numeric(quantile(d1$Residuals)[4] + iqr*1.5))
-  # print(as.numeric(quantile(d1$Residuals)[2] - iqr*1.5))
-  # print(head(d1))
-  
   ### Plotting function
-  plot_fun <- function(data, title="Title") {
+  plot_fun <- function(data, formula = f, title="Title") {
     p <-
       ggplot(data = data[data$outliers == 0, ], aes_string(names(data)[1], names(data)[2])) +
-      geom_point(shape = 1, size = 3) +
-      stat_summary(
-        data = data[data$outliers == 0, ],
-        fun = mean,
-        aes(group = 1),
-        geom = "line",
-        colour = "red"
-      ) +
-      # a smooth line makes more sense than the straight lines of the lab example
-      geom_smooth(data = data[data$outliers == 0, ], method = "loess") +
-      geom_point(data = data[data$outliers == 1,], shape = 1, size = 3) +
+      geom_point(shape = 1, size = 3, colour = liu_col()[1]) +
+      stat_smooth(data = data[data$outliers == 0, ], method = "loess", se = FALSE, colour = liu_col()[2], n = 10, span = 1.1) +
+      geom_point(data = data[data$outliers == 1,], shape = 1, size = 3, colour = liu_col()[1]) +
       geom_text(data = data[data$outliers == 1,], aes(label = rownames(data[data$outliers == 1,])), hjust = 1.2) + 
       geom_hline(yintercept = 0, linetype = "dotted", colour = "gray") +
       ggtitle(title)
     
-    print(p + theme(plot.title = element_text(hjust = 0.5)))
+    print(p + labs(x = paste(names(data)[1], "\n", deparse(formula)), y = names(data)[2]) + theme_liu() + theme(plot.title = element_text(hjust = 0.5)))
   }
   
   # calling the plot_fun

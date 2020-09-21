@@ -7,7 +7,7 @@
 liu_col()
 }
 \value{
-
+A vector of hex codes for LiU's official colors
 }
 \description{
 Colour palette function, simply returning LiU colours

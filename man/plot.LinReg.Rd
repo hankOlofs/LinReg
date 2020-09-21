@@ -12,7 +12,7 @@
 \item{...}{optional arguments to pass to generic}
 }
 \value{
-
+A plot for the linreg class
 }
 \description{
 Plot linreg class

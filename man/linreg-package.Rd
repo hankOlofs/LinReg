@@ -15,7 +15,9 @@ The DESCRIPTION file:
 \packageAuthor{linreg}
 
 Maintainer: \packageMaintainer{linreg}}
-\references{}
+\references{
+\url{https://en.wikipedia.org/wiki/QR_decomposition}
+}
 
 \keyword{ package }
 

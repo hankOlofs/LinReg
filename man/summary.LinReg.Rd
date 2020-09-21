@@ -12,7 +12,7 @@
 \item{...}{optional arguments to pass to generic}
 }
 \value{
-
+A printed summary for a linreg class object
 }
 \description{
 Summary for linreg class

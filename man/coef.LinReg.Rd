@@ -12,7 +12,7 @@
 \item{...}{optional arguments to pass to generic}
 }
 \value{
-
+A vector of coefficients for a linreg class object
 }
 \description{
 Coefficients for linreg class

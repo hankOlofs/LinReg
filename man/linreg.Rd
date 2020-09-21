@@ -14,7 +14,7 @@ linreg(formula, data, QR = FALSE)
 \item{QR}{use QR decomposition if TRUE, else OLS}
 }
 \value{
-
+A linreg class object
 }
 \description{
 Linear regression
@@ -23,4 +23,7 @@ Linear regression
 data(mtcars)
 model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 model
+}
+\references{
+\url{https://en.wikipedia.org/wiki/QR_decomposition}
 }

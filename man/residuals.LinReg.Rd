@@ -12,7 +12,7 @@
 \item{...}{optional arguments to pass to generic}
 }
 \value{
-
+A vector of residuals for an linreg class object
 }
 \description{
 Residuals for linreg class

@@ -5,7 +5,7 @@
 #' @param x a linreg class object
 #' @param ... optional arguments to pass to generic
 #'
-#' @return
+#' @return A print for the linreg class
 #' @export
 #'
 #' @examples 
@@ -13,7 +13,13 @@
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' print(model)
 print.linreg <- function(x, ...) {
+  # Stopping if someone explicitly calls the function with a non-linreg input
+  stopifnot("Input a linreg class object" = class(x) == "linreg")
+  
+  # Getting the formula from the linreg object
   formula <- x$formula
+  
+  # Prints the call made
   cat("\n\nCall: \n")
   if(x$qr == TRUE){
     writeLines(paste("linreg(formula = ",
@@ -40,7 +46,7 @@ print.linreg <- function(x, ...) {
 
 #' Colour palette function, simply returning LiU colours
 #'
-#' @return
+#' @return A vector of hex codes for LiU's official colors
 #' @export
 #'
 #' @examples
@@ -53,7 +59,7 @@ liu_col <- function() {
 
 #' Theme with LiU colours
 #'
-#' @return
+#' @return A theme to be used with ggplot
 #' @export
 #'
 #' @importFrom ggplot2 theme theme_minimal %+replace% element_rect element_blank element_line
@@ -80,8 +86,8 @@ theme_liu <- function() {
 #'
 #' @param x a linreg class object
 #' @param ... optional arguments to pass to generic
-#'
-#' @return
+#' 
+#' @return A plot for the linreg class
 #' @export
 #' 
 #' @importFrom ggplot2 ggplot aes geom_point aes_string stat_summary stat_smooth geom_text geom_hline ggtitle theme element_text labs
@@ -91,6 +97,8 @@ theme_liu <- function() {
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' plot(model)
 plot.linreg <- function(x, ...) {
+  stopifnot("Input a linreg class object" = class(x) == "linreg")
+  
   f <- x$formula
   
   d1 <- data.frame(x$fits, x$resid)
@@ -128,8 +136,8 @@ plot.linreg <- function(x, ...) {
 #'
 #' @param object a linreg class object
 #' @param ... optional arguments to pass to generic
-#'
-#' @return
+#' 
+#' @return A vector of residuals for an linreg class object
 #' @export
 #'
 #' @examples
@@ -137,6 +145,7 @@ plot.linreg <- function(x, ...) {
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' resid(model)
 residuals.linreg <- function(object, ...) {
+  stopifnot("Input a linreg class object" = class(object) == "linreg")
   print(as.vector(object$resid))
 }
 
@@ -148,7 +157,7 @@ residuals.linreg <- function(object, ...) {
 #' @param x a linreg class object
 #' @param ... optional arguments to pass to generic
 #'
-#' @return
+#' @return A vector of predictions for a linreg class object
 #' @export
 #'
 #' @examples
@@ -156,6 +165,7 @@ residuals.linreg <- function(object, ...) {
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' pred(model)
 pred <- function(x, ...) {
+  stopifnot("Input a linreg class object" = class(x) == "linreg")
   stats::predict(x, ...)
 }
 
@@ -164,7 +174,7 @@ pred <- function(x, ...) {
 #' @param object a linreg class object
 #' @param ... optional arguments to pass to generic
 #'
-#' @return
+#' @return A vector of predictions for a linreg class object
 #' @export
 #'
 #' @examples
@@ -172,6 +182,7 @@ pred <- function(x, ...) {
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' pred(model)
 predict.linreg <- function(object, ...) {
+  stopifnot("Input a linreg class object" = class(object) == "linreg")
   print(as.vector(object$fits))
 }
 
@@ -181,7 +192,7 @@ predict.linreg <- function(object, ...) {
 #' @param object a linreg class object
 #' @param ... optional arguments to pass to generic
 #'
-#' @return
+#' @return A vector of coefficients for a linreg class object
 #' @export
 #'
 #' @examples
@@ -189,6 +200,7 @@ predict.linreg <- function(object, ...) {
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' coef(model)
 coef.linreg <- function(object, ...) {
+  stopifnot("Input a linreg class object" = class(object) == "linreg")
   obj <- object$coef
   names(obj) <- colnames(object$X)
   print(obj)
@@ -201,8 +213,8 @@ coef.linreg <- function(object, ...) {
 #'
 #' @param object a linreg class object
 #' @param ... optional arguments to pass to generic
-#'
-#' @return
+#' 
+#' @return A printed summary for a linreg class object
 #' @export
 #'
 #' @examples
@@ -210,6 +222,8 @@ coef.linreg <- function(object, ...) {
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' summary(model)
 summary.linreg <- function(object, ...) {
+  stopifnot("Input a linreg class object" = class(object) == "linreg")
+  
   formula <- object$formula
   cat("\n\nCall: \n")
   if(object$qr == TRUE){

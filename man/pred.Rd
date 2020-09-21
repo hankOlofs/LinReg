@@ -12,7 +12,7 @@ pred(x, ...)
 \item{...}{optional arguments to pass to generic}
 }
 \value{
-
+A vector of predictions for a linreg class object
 }
 \description{
 Prediction caller

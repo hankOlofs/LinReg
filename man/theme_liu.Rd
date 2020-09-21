@@ -7,7 +7,7 @@
 theme_liu()
 }
 \value{
-
+A theme to be used with ggplot
 }
 \description{
 Theme with LiU colours

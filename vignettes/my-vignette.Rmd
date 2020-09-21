@@ -1,5 +1,7 @@
 ---
 title: "The linreg package"
+author: "Henrik Olofsson and Sofie Jörgensen"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{The linreg package}
@@ -28,7 +30,7 @@ For this purpose, we will use the `mtcars` data set.
 
 
 ```{r}
-#usethis::use_vignette("The linreg package")
+usethis::use_vignette("my-vignette")
 data(mtcars)
 head(mtcars)
 ```
@@ -69,11 +71,13 @@ plot(model)
 ```
 
 
-Further, we can extract the model residuals from the `linreg` object by using the `resid()` method. 
+Further, we can extract the model residuals from the `linreg` object and get the coefficients by using `resid()`and `coef()`, respectively. 
 
 
 ```{r}
 resid(model)
+
+coef(model)
 ```
 
 

@@ -29,8 +29,11 @@ For this purpose, we will use the `mtcars` data set.
 
 
 
-```{r}
+```{r, include=FALSE}
 usethis::use_vignette("my-vignette")
+```
+
+```{r}
 data(mtcars)
 head(mtcars)
 ```
@@ -70,6 +73,7 @@ Now let us visualize some diagnostics for the `linreg` object. The `plot()` meth
 plot(model)
 ```
 
+To use the LiU theme, simply apply `theme_liu()` to your ggplot.
 
 Further, we can extract the model residuals from the `linreg` object and get the coefficients by using `resid()`and `coef()`, respectively. 
 

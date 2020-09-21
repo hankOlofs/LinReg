@@ -131,7 +131,13 @@ plot.linreg <- function(x, ...) {
       geom_hline(yintercept = 0, linetype = "dotted", colour = "gray") +
       ggtitle(title)
     
-    print(p + labs(x = paste(names(data)[1], "\n", deparse(formula)), y = names(data)[2]) + theme_liu() + theme(plot.title = element_text(hjust = 0.5)))
+    if (names(data)[2] == "Standardized_residuals") {
+      ylab <- expression(paste(sqrt(abs("Standardized residuals"))))
+    } else {
+      ylab <- "Residuals"
+    }
+
+    print(p + labs(x = paste(names(data)[1], "\n", deparse(formula)), y = ylab) + theme_liu() + theme(plot.title = element_text(hjust = 0.5))))
   }
   
   # calling the plot_fun

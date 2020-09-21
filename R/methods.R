@@ -70,6 +70,7 @@ liu_col <- function() {
 #' plot(lm)
 theme_liu <- function() {
 
+  # Editing the minimal theme for a unique look 
   theme_minimal() %+replace%
     theme(
       plot.background = element_rect(fill = "#B9EEF1"),
@@ -87,7 +88,7 @@ theme_liu <- function() {
 #' @param x a linreg class object
 #' @param ... optional arguments to pass to generic
 #' 
-#' @return A plot for the linreg class
+#' @return Residual plots for the linreg class
 #' @export
 #' 
 #' @importFrom ggplot2 ggplot aes geom_point aes_string stat_summary stat_smooth geom_text geom_hline ggtitle theme element_text labs
@@ -97,22 +98,29 @@ theme_liu <- function() {
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' plot(model)
 plot.linreg <- function(x, ...) {
+  # type check
   stopifnot("Input a linreg class object" = class(x) == "linreg")
   
   f <- x$formula
   
+  # set up two dataframes to hold the residuals to be plotted
   d1 <- data.frame(x$fits, x$resid)
   names(d1) <- c("Fits", "Residuals")
   d2 <- data.frame(x$fits, sqrt(abs(x$resid/sqrt(x$resid_var))))
   names(d2) <- c("Fits", "Standardized_residuals")
   
+  # calculating the inter-quartile range to identify outliers according to Tukey's method
   iqr <- stats::IQR(d1$Residuals)
+  # observations outside the interval [Q_1 - 1.5*(Q_3-Q_1), Q_3 + 1.5*(Q_3-Q_1)] are considered outliers
   d1$outliers <-
     ifelse((d1$Residuals > as.numeric(stats::quantile(d1$Residuals)[4] + iqr * 1.5)) |
              (d1$Residuals < as.numeric(stats::quantile(d1$Residuals)[2] - iqr * 1.5)), 1, 0)
+  # same outliers for the standardized residuals
   d2$outliers <- d1$outliers
   
   ### Plotting function
+  # Define a function using ggplot2 to plot data and a loess line to highlight trend
+  # outliers are excluded in the calculation of the smooth line, hence the multiple geom_point calls
   plot_fun <- function(data, formula = f, title="Title") {
     p <-
       ggplot(data = data[data$outliers == 0, ], aes_string(names(data)[1], names(data)[2])) +
@@ -206,9 +214,10 @@ coef.linreg <- function(object, ...) {
   print(obj)
 }
 
-# summary method
+# Summary method
 # present the coefficients with their...
 # standard error, t-value and p-value as well as the estimate of σˆ and df in the model.
+
 #' Summary for linreg class
 #'
 #' @param object a linreg class object
@@ -222,10 +231,14 @@ coef.linreg <- function(object, ...) {
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' summary(model)
 summary.linreg <- function(object, ...) {
+  # type check
   stopifnot("Input a linreg class object" = class(object) == "linreg")
   
   formula <- object$formula
   cat("\n\nCall: \n")
+  
+  # Different summaries depending on if the QR method has been used or not
+  # here the formula and data used are output
   if(object$qr == TRUE){
     writeLines(paste("linreg(formula = ",
                      utils::capture.output(print(formula)),
@@ -243,6 +256,7 @@ summary.linreg <- function(object, ...) {
                      sep = ""))
   }
 
+  # printing information about the residuals
   cat("\nResiduals: \n")
   q <- data.frame(Min = round(stats::quantile(object$resid, names = FALSE), 4)[1],
                   Q1 = round(stats::quantile(object$resid, names = FALSE), 4)[2],
@@ -252,10 +266,12 @@ summary.linreg <- function(object, ...) {
   rownames(q) <- c("")
   print(q)
 
+  # printing coefficients
   cat("\nCoefficients: \n")
   obj <- object$coef
   names(obj) <- colnames(object$X)
   
+  # p-value indications
   codes <- function(x) {
     if(x >= 0.1){
       code <- " "
@@ -271,6 +287,7 @@ summary.linreg <- function(object, ...) {
     return(code)
   }
   
+  # mapping the indicators to the corresponding lines in output
   signif_codes <- sapply(object$p_val,codes)
   
   # Create table as a data.frame

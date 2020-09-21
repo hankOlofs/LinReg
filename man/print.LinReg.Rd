@@ -12,7 +12,7 @@
 \item{...}{optional arguments to pass to generic}
 }
 \value{
-A print method for the linreg class
+A print for the linreg class
 }
 \description{
 Print for linreg class

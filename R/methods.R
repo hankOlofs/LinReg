@@ -35,7 +35,7 @@ print.linreg <- function(x, ...) {
   cat("\nCoefficients: \n")
   obj <- x$coef
   names(obj) <- colnames(x$X)
-  writeLines(paste("\t", capture.output(print(obj)), sep = ""))
+  writeLines(paste("\t", utils::capture.output(print(obj)), sep = ""))
 }
 
 #' Colour palette function, simply returning LiU colours
@@ -63,8 +63,8 @@ liu_col <- function() {
 #' lm <- linreg(mpg~wt+cyl, data = mtcars)
 #' plot(lm)
 theme_liu <- function() {
-  font <- ""
-  theme_minimal(base_family = font) %+replace%
+
+  theme_minimal() %+replace%
     theme(
       plot.background = element_rect(fill = "#B9EEF1"),
       panel.background = element_rect(fill = "white", colour = NA),
@@ -156,7 +156,7 @@ residuals.linreg <- function(object, ...) {
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' pred(model)
 pred <- function(x, ...) {
-  predict(x, ...)
+  stats::predict(x, ...)
 }
 
 #' Predictions for linreg class
@@ -214,27 +214,27 @@ summary.linreg <- function(object, ...) {
   cat("\n\nCall: \n")
   if(object$qr == TRUE){
     writeLines(paste("linreg(formula = ",
-                     capture.output(print(formula)),
+                     utils::capture.output(print(formula)),
                      ", data = ",
-                     capture.output(print(object$data_name)),
+                     utils::capture.output(print(object$data_name)),
                      ", QR = TRUE)",
                      sep = ""))
   }
   else{
     writeLines(paste("linreg(formula = ",
-                     capture.output(print(formula)),
+                     utils::capture.output(print(formula)),
                      ", data = ",
-                     capture.output(print(object$data_name)),
+                     utils::capture.output(print(object$data_name)),
                      ")",
                      sep = ""))
   }
 
   cat("\nResiduals: \n")
-  q <- data.frame(Min = round(quantile(object$resid, names = FALSE), 4)[1],
-                  Q1 = round(quantile(object$resid, names = FALSE), 4)[2],
-                  Median = round(quantile(object$resid, names = FALSE), 4)[3],
-                  Q3 = round(quantile(object$resid, names = FALSE), 4)[4],
-                  Max = round(quantile(object$resid, names = FALSE), 4)[5])
+  q <- data.frame(Min = round(stats::quantile(object$resid, names = FALSE), 4)[1],
+                  Q1 = round(stats::quantile(object$resid, names = FALSE), 4)[2],
+                  Median = round(stats::quantile(object$resid, names = FALSE), 4)[3],
+                  Q3 = round(stats::quantile(object$resid, names = FALSE), 4)[4],
+                  Max = round(stats::quantile(object$resid, names = FALSE), 4)[5])
   rownames(q) <- c("")
   print(q)
 

@@ -33,7 +33,7 @@ linreg <- function(formula, data, QR = FALSE) {
   sub_data <- data[,variables]
   
   # Create matrix X containing the independent variables
-  X <- model.matrix(formula, data = sub_data)
+  X <- stats::model.matrix(formula, data = sub_data)
   
   # Create the dependent variable y 
   y <- sub_data[1]

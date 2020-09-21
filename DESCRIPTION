@@ -15,7 +15,7 @@ Maintainer: Sofie Jörgensen <sofjo281@student.liu.se>,
             Henrik Olofsson <henol528@student.liu.se>
 Description: The function \code{linreg} takes a formula object and a 
              \code{data.frame} as arguments, and returns an object as an S3 class. 
-              It performs ordinary least squares to calculate different statistics. 
+              It performs ordinary least squares or QR decomposition to calculate different statistics. 
 Depends: R (>= 4.0.0)
 Suggests: 
     testthat,

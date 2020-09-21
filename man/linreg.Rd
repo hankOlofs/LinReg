@@ -17,12 +17,21 @@ linreg(formula, data, QR = FALSE)
 A linreg class object
 }
 \description{
-Linear regression
+The function \code{linreg} takes a formula object and a 
+\code{data.frame} as arguments, and returns an object as an S3 class. 
+It performs ordinary least squares or QR decomposition to calculate different statistics.
 }
 \examples{
 data(mtcars)
-model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
-model
+
+# Fitting a linear regression model using OLS
+model_ols <- linreg(formula = mpg ~ wt + cyl, data = mtcars, QR = FALSE)
+
+# Fitting a linear regression model using QR decomposition 
+model_qr <- linreg(formula = mpg ~ wt + cyl, data = mtcars, QR = TRUE)
+
+model_ols
+model_qr
 }
 \references{
 \url{https://en.wikipedia.org/wiki/QR_decomposition}

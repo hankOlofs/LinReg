@@ -137,7 +137,7 @@ plot.linreg <- function(x, ...) {
       ylab <- "Residuals"
     }
 
-    print(p + labs(x = paste(names(data)[1], "\n", deparse(formula)), y = ylab) + theme_liu() + theme(plot.title = element_text(hjust = 0.5))))
+    print(p + labs(x = paste(names(data)[1], "\n", deparse(formula)), y = ylab) + theme_liu() + theme(plot.title = element_text(hjust = 0.5)))
   }
   
   # calling the plot_fun

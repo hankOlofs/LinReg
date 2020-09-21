@@ -5,14 +5,16 @@
 # model.matrix() to create the matrix X (independent variables) and the pick out the dependent variable
 # y using all.vars().
 
-#library(ggplot2)
 
 #' Linear regression
-#'
+#' 
 #' @param formula a formula, like y~x
 #' @param data a data frame
 #' @param QR use QR decomposition if TRUE, else OLS
 #'
+#' @description The function \code{linreg} takes a formula object and a 
+#' \code{data.frame} as arguments, and returns an object as an S3 class. 
+#' It performs ordinary least squares or QR decomposition to calculate different statistics. 
 #' @return A linreg class object
 #' @export
 #' 
@@ -20,8 +22,15 @@
 #'
 #' @examples
 #' data(mtcars)
-#' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
-#' model
+#' 
+#' # Fitting a linear regression model using OLS
+#' model_ols <- linreg(formula = mpg ~ wt + cyl, data = mtcars, QR = FALSE)
+#' 
+#' # Fitting a linear regression model using QR decomposition 
+#' model_qr <- linreg(formula = mpg ~ wt + cyl, data = mtcars, QR = TRUE)
+#' 
+#' model_ols
+#' model_qr
 
 linreg <- function(formula, data, QR = FALSE) {
   # Some stopping criteria

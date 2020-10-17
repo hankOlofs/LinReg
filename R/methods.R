@@ -1,5 +1,5 @@
 
-# print method
+# print methods
 #' Print for linreg class
 #'
 #' @param x a linreg class object
@@ -43,6 +43,51 @@ print.linreg <- function(x, ...) {
   names(obj) <- colnames(x$X)
   writeLines(paste("\t", utils::capture.output(print(obj)), sep = ""))
 }
+
+#' Print for ridgereg class
+#'
+#' @param x a ridgereg class object
+#' @param ... optional arguments to pass to generic
+#'
+#' @return A print for the ridgereg class
+#' @export
+#'
+#' @examples 
+#' data(mtcars)
+#' model <- ridgereg(mpg~wt+cyl, mtcars, lambda = 0, QR = FALSE)
+#' print(model)
+print.ridgereg <- function(x, ...) {
+  # Stopping if someone explicitly calls the function with a non-ridgereg input
+  stopifnot("Input a ridgereg class object" = class(x) == "ridgereg")
+  
+  # Getting the formula from the ridgereg object
+  formula <- x$formula
+  
+  # Prints the call made
+  cat("\n\nCall: \n")
+  if(x$qr == TRUE){
+    writeLines(paste("ridgereg(formula = ",
+                     utils::capture.output(print(formula)),
+                     ", data = ",
+                     utils::capture.output(print(x$data_name)),
+                     ", QR = TRUE)",
+                     sep = ""))
+  }
+  else{
+    writeLines(paste("ridgereg(formula = ",
+                     utils::capture.output(print(formula)),
+                     ", data = ",
+                     utils::capture.output(print(x$data_name)),
+                     ")",
+                     sep = ""))
+  }
+  
+  cat("\nCoefficients: \n")
+  obj <- x$coef
+  names(obj) <- colnames(x$X)
+  writeLines(paste("\t", utils::capture.output(print(obj)), sep = ""))
+}
+
 
 #' Colour palette function, simply returning LiU colours
 #'
@@ -179,7 +224,7 @@ residuals.linreg <- function(object, ...) {
 #' model <- linreg(mpg~wt+cyl, mtcars, QR = FALSE)
 #' pred(model)
 pred <- function(x, ...) {
-  stopifnot("Input a linreg class object" = class(x) == "linreg")
+  stopifnot("Input a predictable class object" = class(x) %in% c("linreg", "ridgereg"))
   stats::predict(x, ...)
 }
 
@@ -200,6 +245,24 @@ predict.linreg <- function(object, ...) {
   print(as.vector(object$fits))
 }
 
+#' Predictions for ridgereg class
+#'
+#' @param object a ridgereg class object
+#' @param ... optional arguments to pass to generic
+#'
+#' @return A vector of predictions for a ridgereg class object
+#' @export
+#'
+#' @examples
+#' data(mtcars)
+#' model <- ridgereg(mpg~wt+cyl, mtcars, lambda = 0, QR = FALSE)
+#' pred(model)
+
+predict.ridgereg <- function(object, ...) {
+  stopifnot("Input a ridgereg class object" = class(object) == "ridgereg")
+  print(as.vector(object$fits))
+}
+
 # coef method
 #' Coefficients for linreg class
 #'
@@ -215,6 +278,26 @@ predict.linreg <- function(object, ...) {
 #' coef(model)
 coef.linreg <- function(object, ...) {
   stopifnot("Input a linreg class object" = class(object) == "linreg")
+  obj <- object$coef
+  names(obj) <- colnames(object$X)
+  print(obj)
+}
+
+# coef method for ridge regression
+#' Coefficients for ridgereg class
+#'
+#' @param object a ridge class object
+#' @param ... optional arguments to pass to generic
+#'
+#' @return A vector of coefficients for a linreg class object
+#' @export
+#'
+#' @examples
+#' data(mtcars)
+#' model <- ridgereg(mpg~wt+cyl, mtcars,lambda = 0, QR = FALSE)
+#' coef(model)
+coef.ridgereg <- function(object, ...) {
+  stopifnot("Input a ridgereg class object" = class(object) == "ridgereg")
   obj <- object$coef
   names(obj) <- colnames(object$X)
   print(obj)
@@ -315,3 +398,5 @@ summary.linreg <- function(object, ...) {
                    sep = ""))
   
 }
+
+

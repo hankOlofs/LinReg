@@ -1,4 +1,4 @@
-context("linreg")
+context("methods")
 
 data("iris")
 
@@ -6,9 +6,6 @@ test_that("linreg rejects errounous input", {
   expect_error(linreg(Petal.Length~Sepdsal.Width+Sepal.Length, data=iris))
   expect_error(linreg(Petal.Length~Sepdsal.Width+Sepal.Length, data=irfsfdis))
 })
-
-# linreg <- lm
-# 
 
 
 test_that("print() works", {
@@ -45,3 +42,4 @@ test_that("summary() works", {
   expect_output(summary(linreg_mod), "Sepal.Length( )*1.7[0-9]*( )*0.0[0-9]*( )*27.5[0-9]*( )*.*( )*\\*\\*\\*")
   expect_output(summary(linreg_mod), "Residual standard error: 0.6[0-9]* on 147 degrees of freedom")
 })
+

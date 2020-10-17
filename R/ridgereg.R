@@ -20,7 +20,6 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
   stopifnot("Lambda must be an integer" = is.numeric(lambda))
   stopifnot("Lambda must be an integer" = is.logical(QR))
   
-
   # normalize values of data
   ## extract covariates
   # Extract all variables using all.vars() (as demanded in the task)
@@ -31,39 +30,44 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
   
   # Create matrix X containing the independent variables
   X <- stats::model.matrix(formula, data = sub_data)
-  
+
   # Create the dependent variable y 
   y <- sub_data[1]
-  
-  # Number of observations
+
+    # Number of observations
   n <- nrow(X)
   
   # Number of parameters
   p <- ncol(X)
   
-  X_norm <- apply(X, 2, function(X) {
-    X_norm <- (X-mean(X))/sqrt(stats::var(X))
-    return(X_norm)
-  })
+  X_norm <- scale(X)
+  # X_norm <- apply(X, 2, function(X) {
+  #   X_norm <- (X-mean(X))/sqrt(stats::var(X))
+  #   return(X_norm)
+  # })
+  X_norm[,1] <- 1
   
   # Regressions coefficients:
-  beta_hat <- as.vector((solve(t(X) %*% X) + lambda*diag(ncol(X))) %*% t(X) %*% as.matrix(y))
+  beta_hat <- as.vector((solve(t(X_norm) %*% X_norm + (lambda*diag(p)))) %*% t(X_norm) %*% as.matrix(y))
   
   # The fitted values:
-  y_hat <- X %*% beta_hat
+  y_hat <- X_norm %*% beta_hat
+  
+  ## check y - maybe normalize 
+  y_norm <- scale(y)
   
   # The residuals:
-  e_hat <- as.matrix(y - y_hat)
+  e_hat <- as.matrix(y_norm - y_hat)
   
   # The degrees of freedom:
   df <- n - p 
   
   # The residual variance:
-  resid_var <- as.vector(t(e_hat) %*%e_hat/df)
+  resid_var <- as.vector(t(e_hat) %*% e_hat/df)
   
   if(QR == FALSE){
     # The variance of the regression coefficients:
-    var_hat <- diag(resid_var * as.matrix(solve(t(X_norm)%*%X_norm)))
+    var_hat <- diag(resid_var * as.matrix(solve(t(X_norm) %*% X_norm)))
   }
   
   # Returning a list of class linreg

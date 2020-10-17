@@ -205,7 +205,7 @@ plot.linreg <- function(x, ...) {
 #' resid(model)
 residuals.linreg <- function(object, ...) {
   stopifnot("Input a linreg class object" = class(object) == "linreg")
-  print(as.vector(object$resid))
+  return(as.vector(object$resid))
 }
 
 # pred method
@@ -242,7 +242,7 @@ pred <- function(x, ...) {
 #' pred(model)
 predict.linreg <- function(object, ...) {
   stopifnot("Input a linreg class object" = class(object) == "linreg")
-  print(as.vector(object$fits))
+  return(as.vector(object$fits))
 }
 
 #' Predictions for ridgereg class
@@ -260,7 +260,7 @@ predict.linreg <- function(object, ...) {
 
 predict.ridgereg <- function(object, ...) {
   stopifnot("Input a ridgereg class object" = class(object) == "ridgereg")
-  print(as.vector(object$fits))
+  return(as.vector(object$fits))
 }
 
 # coef method
@@ -280,7 +280,7 @@ coef.linreg <- function(object, ...) {
   stopifnot("Input a linreg class object" = class(object) == "linreg")
   obj <- object$coef
   names(obj) <- colnames(object$X)
-  print(obj)
+  return(obj)
 }
 
 # coef method for ridge regression
@@ -300,7 +300,7 @@ coef.ridgereg <- function(object, ...) {
   stopifnot("Input a ridgereg class object" = class(object) == "ridgereg")
   obj <- object$coef
   names(obj) <- colnames(object$X)
-  print(obj)
+  return(obj)
 }
 
 # Summary method

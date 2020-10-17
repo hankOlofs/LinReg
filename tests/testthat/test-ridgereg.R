@@ -16,10 +16,11 @@ test_that("class is correct", {
   
   expect_s3_class(ridgereg_mod, "ridgereg")
 })
-# 
-# test_that("results are correct",{
-#   expect_equal
-# })
 
-
+test_that("results are correct", {
+  expect_equal(round((ridgereg(Petal.Length~Sepal.Width+Sepal.Length, data = iris, lambda = 0))$coef[[2]], 2),
+              round((MASS::lm.ridge(Petal.Length~Sepal.Width+Sepal.Length, data = iris, lambda = 0))$coef[[1]], 2))
+  expect_equal(round((ridgereg(Petal.Length~Sepal.Width+Sepal.Length, data = iris, lambda = 1))$coef[[2]], 2),
+               round((MASS::lm.ridge(Petal.Length~Sepal.Width+Sepal.Length, data = iris, lambda = 1))$coef[[1]], 2))
+})
 

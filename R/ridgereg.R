@@ -12,6 +12,15 @@
 #' @export
 #'
 #' @examples
+#' #' data(mtcars)
+#' 
+#' # Fitting a ridge regression model using OLS
+#' model_ols <- ridgereg(formula = mpg ~ wt + cyl, data = mtcars, lambda = 1, QR = FALSE)
+#' model_ols 
+#' 
+#' model_qr  <- ridgereg(formula = mpg ~ wt + cyl, data = mtcars, lambda = 1, QR = TRUE)
+#' model_qr 
+#' 
 ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
  
   stopifnot("A formula object must be provided" = !missing(formula))
@@ -40,6 +49,7 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
   # Number of parameters
   p <- ncol(X)
   
+
   X_norm <- scale(X)
   # X_norm <- apply(X, 2, function(X) {
   #   X_norm <- (X-mean(X))/sqrt(stats::var(X))
@@ -47,37 +57,101 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
   # })
   X_norm[,1] <- 1
   
-  # Regressions coefficients:
-  beta_hat <- as.vector((solve(t(X_norm) %*% X_norm + (lambda*diag(p)))) %*% t(X_norm) %*% as.matrix(y))
+  if(QR == FALSE){
+    
+    # Regressions coefficients:
+    beta_hat <- as.vector((solve(t(X_norm) %*% X_norm + (lambda*diag(p)))) %*% t(X_norm) %*% as.matrix(y))
+    
+  }
+  else{
+    # QR decomposition
+    # Check whether the linear system is underdetermined or overdetermined
+    if(n < p){
+      X_norm <- t(X_norm)
+      p <- ncol(X_norm)
+      # Number of observations
+      n <- nrow(X_norm)
+      underdetermined <- TRUE
+    }
+    else{
+      underdetermined <- FALSE
+    }
+    # Create a diagonal matrix L such that L'L=lambda*I
+    L <- diag(sqrt(lambda), p)
+    
+    # Create a matrix B containing X and L
+    B <- rbind(X_norm, L)
+    
+    # Number of parameters
+    p <- ncol(B)
+    
+    # Number of observations
+    n <- nrow(B)
+    
+    # List for all Household reflection matrices H_1...H_p
+    H <- list()
+    A <- B
+    # Create p Householder reflection matrices
+    for(i in 1:p){
+      A2 <- A[i:n,i:p]
+      I <- diag(x = 1, nrow = n, ncol = n)
+      v <- as.matrix(A2)[,1]
+      # Euclidean norm ||X||_2
+      norm_2 <- sqrt(sum(v^2))
+      # Compute v 
+      v[1] <- v[1] + sign(v[1]) %*% norm_2
+      # Compute i:th Household reflection matrix
+      I[i:n,i:n] <- diag(x = 1, nrow = n - i + 1, ncol = n - i + 1) - 2 * (v%*%t(v)/as.vector(t(v)%*%v))
+      H[[i]] <- I
+      # Update matrix
+      A <-   H[[i]] %*% A 
+      # Put elements to zero if near zero
+      A[abs(A)< 1e-14] <- 0 
+    }
+    Q <- Reduce("%*%", H)[,1:p]
+    R <- A[1:p,]
+    n <- nrow(y)
+    
+    if(underdetermined == TRUE){
+      res <- forwardsolve(t(R), unlist(y, use.names = FALSE))
+      beta_hat <- as.vector(Q[1:n,] %*% (c(res , rep(0, (ncol(Q)-length(res))))))
+    }else{
+      res <- t(Q[1:n,]) %*% unlist(y, use.names = FALSE)
+      beta_hat <- as.vector(backsolve(R , res))
+    }
+    X_norm <- B
+  }
   
   # The fitted values:
-  y_hat <- X_norm %*% beta_hat
+  y_hat <- (X_norm %*% beta_hat)[1:n]
   
   ## check y - maybe normalize 
   y_norm <- scale(y)
   
   # The residuals:
   e_hat <- as.matrix(y_norm - y_hat)
-  
+
   # The degrees of freedom:
-  df <- n - p 
-  
+  df <- n - p
+
   # The residual variance:
   resid_var <- as.vector(t(e_hat) %*% e_hat/df)
-  
+
   if(QR == FALSE){
     # The variance of the regression coefficients:
     var_hat <- diag(resid_var * as.matrix(solve(t(X_norm) %*% X_norm)))
+  }else{
+    var_hat <- diag(chol2inv(R) * resid_var)
   }
-  
-  # Returning a list of class linreg
+
   # The t-values for each coefficient:
   t <- beta_hat/sqrt(var_hat)
-  
+
   # p-value
   pt <- 2*pt(-abs(t), df,lower.tail = TRUE)
+ 
   
-  # Returning a list of class linreg
+  # Returning a list of class ridgereg
   statistics <- list(data = data,
                      X = X,
                      X_norm = X_norm,

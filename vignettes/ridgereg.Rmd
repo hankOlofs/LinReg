@@ -47,8 +47,38 @@ lin <- train(medv ~ ., data = train_data,
 
 # Linear Regression with Forward Selection
 lin_forward <- train(medv ~ ., data = train_data, 
-                 method = "leapForward")
+                 method = "leapForward",
+                 tuneGrid = data.frame(nvmax = 1:(ncol(train_data)-1)))
 ```
 
+```{r}
+lin$results
+lin_forward$results
+# Best number of variables in model
+nvmax <- lin_forward$bestTune
+summary(lin_forward$finalModel)
+coef(lin_forward$finalModel, unlist(nvmax))
+```
 
+*Evaluate the performance of this model on the training dataset*
+
+Fit a ridge regression model using your ridgereg() function to the training dataset for different values of λ. How to include custom models in caret is described here http://topepo.github.io/caret/custom models.html.
+
+
+```{r}
+# Custom models
+# testing with lm 
+# Aim is to fit a ridge regression model using ridgereg() function to the training dataset for different values of λ.
+
+offset_mod <- getModelInfo("lm", regex = FALSE)[[1]]
+offset_mod$fit <- function(x, y, wts, param, lev, last, classProbs, ...) {
+  dat <- if(is.data.frame(x)) x else as.data.frame(x)
+  dat$medv <- y
+  lm(medv ~ crim + zn + indus + nox + rm + age + dis + rad + tax + ptratio + b + lstat, data = dat)
+}
+
+mod <- train(x = train, y = train_data$medv, method = offset_mod)
+coef(mod$finalModel)
+
+```
 

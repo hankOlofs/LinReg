@@ -1,0 +1,41 @@
+---
+title: "The ridgereg function in the linreg package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ridgereg}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(linreg)
+library(caret)
+library(mlbench)
+```
+
+The updated version of the `linreg` package provides a new function called `ridgereg()` that performs ridge regression. We are delighted to present the `ridgereg` function in this vignette and now we will show its functionality by an example. In the following example, we will create a predictive model for the `BostonHousing` data in the `mlbench` package. For the model training process we will use the `caret` package. Both packages are loaded in our workspace. 
+
+Now let's get started! 
+
+First, the `BostonHousing` data will be divided into a training set and a test set by using the
+`caret` package, where $80\%$ will be for training, and the remaining $20\%$ for testing. The response variable is `medv` (median value of owner-occupied homes in USD 1000's).
+
+```{r}
+data("BostonHousing")
+set.seed(123)
+trainIndex <- createDataPartition(BostonHousing$medv, p = .8, 
+                                  list = FALSE, 
+                                  times = 1)
+BostonHousing_train <- BostonHousing[ trainIndex,]
+BostonHousing_test  <- BostonHousing[-trainIndex,]
+```
+After dividing the data into a training and a test set, we will now fit a linear regression model. Two linear regression models will be fitted to the `BostonHousing` training data; one model consists of all predictor variables, and one model with only significant predictors to the fit using forward selection. 
+
+Information on linear regression models in the caret package can be found here http://topepo.github.io/caret/Linear Regression.html.

@@ -33,9 +33,22 @@ set.seed(123)
 trainIndex <- createDataPartition(BostonHousing$medv, p = .8, 
                                   list = FALSE, 
                                   times = 1)
-BostonHousing_train <- BostonHousing[ trainIndex,]
-BostonHousing_test  <- BostonHousing[-trainIndex,]
+train_data <- BostonHousing[ trainIndex,]
+test_data  <- BostonHousing[-trainIndex,]
 ```
-After dividing the data into a training and a test set, we will now fit a linear regression model. Two linear regression models will be fitted to the `BostonHousing` training data; one model consists of all predictor variables, and one model with only significant predictors to the fit using forward selection. 
+After dividing the data into a training and a test set, we will now fit two linear regression models to the `BostonHousing` training data using the `caret` package - one model consists of all continuous variables as predictors, and one model with only significant continuous variables using forward selection. Another package called `leaps` is required in order to perform forward selection. 
 
-Information on linear regression models in the caret package can be found here http://topepo.github.io/caret/Linear Regression.html.
+```{r}
+
+library(leaps)
+# Linear regression
+lin <- train(medv ~ ., data = train_data, 
+                 method = "lm")
+
+# Linear Regression with Forward Selection
+lin_forward <- train(medv ~ ., data = train_data, 
+                 method = "leapForward")
+```
+
+
+

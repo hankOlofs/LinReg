@@ -66,9 +66,9 @@ Fit a ridge regression model using your ridgereg() function to the training data
 
 
 ```{r}
-# Custom models
+# Test to use custom models with lm
 # testing with lm 
-# Aim is to fit a ridge regression model using ridgereg() function to the training dataset for different values of λ.
+# Aim is to fit a ridge regression model using ridgereg() function to the training dataset for different values of lambda.
 
 offset_mod <- getModelInfo("lm", regex = FALSE)[[1]]
 offset_mod$fit <- function(x, y, wts, param, lev, last, classProbs, ...) {
@@ -81,4 +81,62 @@ mod <- train(x = train, y = train_data$medv, method = offset_mod)
 coef(mod$finalModel)
 
 ```
+
+
+```{r}
+# Do not include in vignette later.
+#TESTING
+library(MASS)
+# Test ridge on mtcars - need to scale back?
+# linreg package
+ridgereg(formula = mpg ~ wt + cyl, data = mtcars, lambda = 1, QR = FALSE)
+
+# MASS package
+lm.ridge(formula = mpg ~ wt + cyl, data = mtcars, lambda = 1)
+
+# stats package
+lm(formula = mpg ~ wt + cyl, data = mtcars)
+
+# caret package
+ridge <- train(
+  mpg ~ wt + cyl, data = mtcars, method = "glmnet",
+  trControl = trainControl("cv", number = 10),
+  tuneGrid = expand.grid(alpha = 0, lambda = 1 )
+)
+coef(ridge$finalModel, ridge$bestTune$lambda)
+```
+
+```{r}
+library(glmnet)
+library(tidyverse)
+lambda <- seq(0, 10, length = 100)
+
+# Find the best hyperparameter value for lambda using 10-fold cross-validation on the training set.
+# Need to replace with our ridgereg
+ridge <- train(
+  medv ~., data = train_data, method = "glmnet",
+  trControl = trainControl("cv", number = 10),
+  tuneGrid = expand.grid(alpha = 0, lambda = lambda )
+)
+coef(ridge$finalModel, ridge$bestTune$lambda)
+
+predictions <- ridge %>% predict(test_data)
+
+# Model prediction performance
+data.frame(
+  RMSE = RMSE(predictions, test_data$medv),
+  Rsquare = R2(predictions, test_data$medv)
+)
+
+# Predict
+predictions <- ridge %>% predict(test_data)
+# Model prediction performance
+data.frame(
+  RMSE = RMSE(predictions, test_data$medv),
+  Rsquare = R2(predictions, test_data$medv)
+)
+
+
+```
+
 

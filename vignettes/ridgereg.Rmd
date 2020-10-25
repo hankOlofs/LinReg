@@ -44,12 +44,12 @@ After dividing the data into a training and a test set, we will now fit two line
 
 library(leaps)
 # Linear regression
-lin <- train(medv ~ . + rm:lstat,
+lin <- train(medv ~ crim + zn + age + indus + chas + nox + rm + dis + rad + tax + ptratio + b + lstat + rm:lstat,
              data = train_data,
                  method = "lm")
 
 # Linear Regression with Forward Selection
-lin_forward <- train(medv ~ . + rm:lstat, 
+lin_forward <- train(medv ~ crim + zn + age + indus + chas + nox + rm + dis + rad + tax + ptratio + b + lstat + rm:lstat, 
                      data = train_data, 
                  method = "leapForward",
                  tuneGrid = data.frame(nvmax = 1:(ncol(train_data)-1)))
@@ -72,121 +72,7 @@ postResample(pred = lin_forward_pred, obs = train_data$medv)
 Further, we will fit a ridge regression model by using the `ridgereg` function, for different values of $\lambda$. 
 
 
-
-```{r}
-# Test to use custom models with lm
-# testing with lm 
-# Aim is to fit a ridge regression model using ridgereg() function to the training dataset for different values of lambda.
-
-offset_mod <- getModelInfo("lm", regex = FALSE)[[1]]
-offset_mod$fit <- function(x, y, wts, param, lev, last, classProbs, ...) {
-  dat <- if(is.data.frame(x)) x else as.data.frame(x)
-  dat$medv <- y
-  lm(medv ~ crim + zn + indus + nox + rm + age + dis + rad + tax + ptratio + b + lstat, data = dat)
-}
-
-mod <- train(x = train, y = train_data$medv, method = offset_mod)
-coef(mod$finalModel)
-
-```
-
-
-```{r}
-# Do not include in vignette later.
-#TESTING
-library(MASS)
-# Test ridge on mtcars - need to scale back?
-# linreg package
-ridgereg(formula = mpg ~ wt + cyl, data = mtcars, lambda = 1, QR = FALSE)
-
-# MASS package
-lm.ridge(formula = mpg ~ wt + cyl, data = mtcars, lambda = 1)
-
-# stats package
-lm(formula = mpg ~ wt + cyl, data = mtcars)
-
-# caret package
-ridge <- train(
-  mpg ~ wt + cyl, data = mtcars, method = "glmnet",
-  trControl = trainControl("cv", number = 10),
-  tuneGrid = expand.grid(alpha = 0, lambda = 1 )
-)
-coef(ridge$finalModel, ridge$bestTune$lambda)
-```
-
 A 10-fold cross-validation on the training set will be used in order to find the best hyperparameter value for $\lambda$. 
-
-```{r}
-library(glmnet)
-library(tidyverse)
-lambda <- seq(0, 10, length = 100)
-
-# Find best lambda using 10-fold cross-validation
-# Need to replace with our ridgereg
-ridge <- train(
-  medv ~., data = train_data, method = "glmnet",
-  trControl = trainControl("cv", number = 10),
-  tuneGrid = expand.grid(alpha = 0, lambda = lambda )
-)
-coef(ridge$finalModel, ridge$bestTune$lambda)
-
-predictions <- ridge %>% predict(test_data)
-
-# Model prediction performance
-data.frame(
-  RMSE = RMSE(predictions, test_data$medv),
-  Rsquare = R2(predictions, test_data$medv)
-)
-
-# Predict
-predictions <- ridge %>% predict(test_data)
-# Model prediction performance
-data.frame(
-  RMSE = RMSE(predictions, test_data$medv),
-  Rsquare = R2(predictions, test_data$medv)
-)
-
-
-```
-
-
-```{r}
-
-library(caret)
-library(mlbench)
-data(Sonar)
-
-LogLoss <- function (data, lev = NULL, model = NULL){ 
-  obs <- data[, "obs"] #truth
-  cls <- levels(obs) #find class names
-  probs <- data[, cls[2]] #use second class name to extract probs for 2nd clas
-  probs <- pmax(pmin(as.numeric(probs), 1 - 1e-15), 1e-15) #bound probability, this line and bellow is just logloss calculation, irrelevant for your question 
-  logPreds <- log(probs)        
-  log1Preds <- log(1 - probs)
-  real <- (as.numeric(data$obs) - 1)
-  out <- c(mean(real * logPreds + (1 - real) * log1Preds)) * -1
-  names(out) <- c("LogLoss") #important since this is specified in call to train. Output can be a named vector of multiple values. 
-  out
-}
-
-fitControl <- trainControl(method = "cv",
-                           number = 10,
-                           summaryFunction = ridgereg)
-
-
-fit <-  train(medv ~.,
-             data = train_data,
-             method = "rpart", 
-             metric = "ridgereg" ,
-             tuneLength = 10,
-             trControl = fitControl,
-             maximize = FALSE) #important, depending on calculated performance measure
-
-fit
-
-
-```
-
 
 
 
@@ -200,31 +86,30 @@ modelInfo <- list(label = "Hyperparameter",
                   class = "numeric",
                   label = "Hyperparameter"),
                   grid = function(x, y, len = NULL, search = "grid"){
-                    grid <- expand.grid( lambda = seq(0, 3, length = 10))
+                    grid <- expand.grid(lambda = seq(0, 3, length = 10))
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {          
                     ## ridgereg requires a data frame with predictors and response
                     dat <- if(is.data.frame(x)) x else as.data.frame(x)
                     dat$medv <- y
-                    mod <- ridgereg(
-                      medv ~ .,
-                      data = dat
+                 
+                   mod <- ridgereg(
+                      medv ~ crim + zn + age + indus + chas + nox + rm + dis + rad + tax + ptratio + b + lstat,
+                      data = dat,
+                      lambda = param$lambda
                       )
                     },
                   predict = function(modelFit, newdata, submodels = NULL) {
-                    if(!is.data.frame(newdata)) newdata <- as.data.frame(newdata)
-                    ## By default a matrix is returned; we convert it to a vector
+                    print(modelFit)
+                    newdata <- as.data.frame(newdata)
                     predict(modelFit, newdata)[,1]
                   },
                   loop = NULL,
                   prob = NULL,
                   levels = NULL)
 
-## Just use the basic formula method so that these predictors
-## are passed 'as-is' into the model fitting and prediction
-## functions.
-set.seed(307)
-rr <- train(medv ~ ., 
+set.seed(123)
+rr <- train(medv ~ crim + zn + age + indus + chas + nox + rm + dis + rad + tax + ptratio + b + lstat, 
                        data = train_data, 
                        method = modelInfo,
                        trControl = trainControl(method = "repeatedcv",

@@ -36,33 +36,41 @@ trainIndex <- createDataPartition(BostonHousing$medv, p = .8,
 train_data <- BostonHousing[ trainIndex,]
 test_data  <- BostonHousing[-trainIndex,]
 ```
+
 After dividing the data into a training and a test set, we will now fit two linear regression models to the `BostonHousing` training data using the `caret` package - one model consists of all continuous variables as predictors, and one model with only significant continuous variables using forward selection. Another package called `leaps` is required in order to perform forward selection. 
+
 
 ```{r}
 
 library(leaps)
 # Linear regression
-lin <- train(medv ~ ., data = train_data, 
+lin <- train(medv ~ . + rm:lstat,
+             data = train_data,
                  method = "lm")
 
 # Linear Regression with Forward Selection
-lin_forward <- train(medv ~ ., data = train_data, 
+lin_forward <- train(medv ~ . + rm:lstat, 
+                     data = train_data, 
                  method = "leapForward",
                  tuneGrid = data.frame(nvmax = 1:(ncol(train_data)-1)))
 ```
 
+
+Then we evaluate the performance of the two linear regression models on the training data, and we can notice that they obtained similar estimations of the root mean squared error (RMSE), $R^2$, and the mean absolute error (MAE).
+
 ```{r}
-lin$results
-lin_forward$results
-# Best number of variables in model
-nvmax <- lin_forward$bestTune
-summary(lin_forward$finalModel)
-coef(lin_forward$finalModel, unlist(nvmax))
+lin_pred <- predict(lin, train_data)
+postResample(pred = lin_pred, obs = train_data$medv)
 ```
 
-*Evaluate the performance of this model on the training dataset*
+```{r}
+lin_forward_pred  <- predict(lin_forward , train_data)
+postResample(pred = lin_forward_pred, obs = train_data$medv)
+```
 
-Fit a ridge regression model using your ridgereg() function to the training dataset for different values of λ. How to include custom models in caret is described here http://topepo.github.io/caret/custom models.html.
+
+Further, we will fit a ridge regression model by using the `ridgereg` function, for different values of $\lambda$. 
+
 
 
 ```{r}
@@ -191,7 +199,9 @@ modelInfo <- list(label = "Hyperparameter",
                   parameters = data.frame(parameter = "lambda",
                   class = "numeric",
                   label = "Hyperparameter"),
-                  grid = expand.grid(alpha = 0, lambda = seq(0, 10, length = 100)),
+                  grid = function(x, y, len = NULL, search = "grid"){
+                    grid <- expand.grid( lambda = seq(0, 3, length = 10))
+                  },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {          
                     ## ridgereg requires a data frame with predictors and response
                     dat <- if(is.data.frame(x)) x else as.data.frame(x)
@@ -214,12 +224,12 @@ modelInfo <- list(label = "Hyperparameter",
 ## are passed 'as-is' into the model fitting and prediction
 ## functions.
 set.seed(307)
-mboost_resamp <- train(medv ~ age, 
-                       data = train, 
+rr <- train(medv ~ ., 
+                       data = train_data, 
                        method = modelInfo,
                        trControl = trainControl(method = "repeatedcv",
                                                 repeats = 10))
-mboost_resamp
+rr
 ```
 
 

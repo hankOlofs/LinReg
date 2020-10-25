@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-#' #' data(mtcars)
+#' data(mtcars)
 #' 
 #' # Fitting a ridge regression model using OLS
 #' model_ols <- ridgereg(formula = mpg ~ wt + cyl, data = mtcars, lambda = 1, QR = FALSE)
@@ -42,19 +42,15 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
 
   # Create the dependent variable y 
   y <- sub_data[1]
-
-    # Number of observations
+  
+  # Number of observations
   n <- nrow(X)
   
   # Number of parameters
   p <- ncol(X)
-  
 
   X_norm <- scale(X)
-  # X_norm <- apply(X, 2, function(X) {
-  #   X_norm <- (X-mean(X))/sqrt(stats::var(X))
-  #   return(X_norm)
-  # })
+  scales <- attr(X_norm, "scaled:scale")
   X_norm[,1] <- 1
   
   if(QR == FALSE){
@@ -122,8 +118,18 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
     X_norm <- B
   }
   
+  # trying to rescale
+  ym <- mean(y[,1])
+  xm <- colMeans(X[, -1])
+  print(xm)
+  scaledcoef <- t(as.matrix(beta_hat/scales))
+  print(scaledcoef[-1])
+  inter <- ym - (scaledcoef[-1] %*% as.vector(xm))
+  scaledcoef <- cbind(Intercept = inter, scaledcoef)
+  
   # The fitted values:
   y_hat <- (X_norm %*% beta_hat)[1:n]
+  y_hat_scaled <- (X_norm[-1] %*% scaledcoef)[1:n]
   
   ## check y - maybe normalize 
   y_norm <- scale(y)
@@ -160,6 +166,7 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
                      formula = formula,
                      coef = beta_hat, 
                      fits = y_hat,
+                     rescaled_fits = y_hat_scaled,
                      resid = e_hat,
                      df = df,
                      resid_var = resid_var,

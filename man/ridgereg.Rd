@@ -23,3 +23,14 @@ The function \code{ridgereg} takes a formula object, a
 \code{data.frame} and a penalty parameter \code{lambda} as arguments, and returns a ridgereg object as an S3 class. 
 It performs ordinary least squares or QR decomposition to calculate different statistics.
 }
+\examples{
+#' data(mtcars)
+
+# Fitting a ridge regression model using OLS
+model_ols <- ridgereg(formula = mpg ~ wt + cyl, data = mtcars, lambda = 1, QR = FALSE)
+model_ols 
+
+model_qr  <- ridgereg(formula = mpg ~ wt + cyl, data = mtcars, lambda = 1, QR = TRUE)
+model_qr 
+
+}

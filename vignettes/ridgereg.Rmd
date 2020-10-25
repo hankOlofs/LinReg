@@ -106,12 +106,14 @@ ridge <- train(
 coef(ridge$finalModel, ridge$bestTune$lambda)
 ```
 
+A 10-fold cross-validation on the training set will be used in order to find the best hyperparameter value for $\lambda$. 
+
 ```{r}
 library(glmnet)
 library(tidyverse)
 lambda <- seq(0, 10, length = 100)
 
-# Find the best hyperparameter value for lambda using 10-fold cross-validation on the training set.
+# Find best lambda using 10-fold cross-validation
 # Need to replace with our ridgereg
 ridge <- train(
   medv ~., data = train_data, method = "glmnet",
@@ -137,6 +139,87 @@ data.frame(
 )
 
 
+```
+
+
+```{r}
+
+library(caret)
+library(mlbench)
+data(Sonar)
+
+LogLoss <- function (data, lev = NULL, model = NULL){ 
+  obs <- data[, "obs"] #truth
+  cls <- levels(obs) #find class names
+  probs <- data[, cls[2]] #use second class name to extract probs for 2nd clas
+  probs <- pmax(pmin(as.numeric(probs), 1 - 1e-15), 1e-15) #bound probability, this line and bellow is just logloss calculation, irrelevant for your question 
+  logPreds <- log(probs)        
+  log1Preds <- log(1 - probs)
+  real <- (as.numeric(data$obs) - 1)
+  out <- c(mean(real * logPreds + (1 - real) * log1Preds)) * -1
+  names(out) <- c("LogLoss") #important since this is specified in call to train. Output can be a named vector of multiple values. 
+  out
+}
+
+fitControl <- trainControl(method = "cv",
+                           number = 10,
+                           summaryFunction = ridgereg)
+
+
+fit <-  train(medv ~.,
+             data = train_data,
+             method = "rpart", 
+             metric = "ridgereg" ,
+             tuneLength = 10,
+             trControl = fitControl,
+             maximize = FALSE) #important, depending on calculated performance measure
+
+fit
+
+
+```
+
+
+
+
+```{r}
+# Include own model in train()
+# PLEASE FIND WHAT'S WRONG
+modelInfo <- list(label = "Hyperparameter",
+                  library = "linreg",
+                  type = "Regression",
+                  parameters = data.frame(parameter = "lambda",
+                  class = "numeric",
+                  label = "Hyperparameter"),
+                  grid = expand.grid(alpha = 0, lambda = seq(0, 10, length = 100)),
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {          
+                    ## ridgereg requires a data frame with predictors and response
+                    dat <- if(is.data.frame(x)) x else as.data.frame(x)
+                    dat$medv <- y
+                    mod <- ridgereg(
+                      medv ~ .,
+                      data = dat
+                      )
+                    },
+                  predict = function(modelFit, newdata, submodels = NULL) {
+                    if(!is.data.frame(newdata)) newdata <- as.data.frame(newdata)
+                    ## By default a matrix is returned; we convert it to a vector
+                    predict(modelFit, newdata)[,1]
+                  },
+                  loop = NULL,
+                  prob = NULL,
+                  levels = NULL)
+
+## Just use the basic formula method so that these predictors
+## are passed 'as-is' into the model fitting and prediction
+## functions.
+set.seed(307)
+mboost_resamp <- train(medv ~ age, 
+                       data = train, 
+                       method = modelInfo,
+                       trControl = trainControl(method = "repeatedcv",
+                                                repeats = 10))
+mboost_resamp
 ```
 
 

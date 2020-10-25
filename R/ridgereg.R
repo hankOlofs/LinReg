@@ -48,15 +48,16 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
   
   # Number of parameters
   p <- ncol(X)
-
+  
+  # Scale data
   X_norm <- scale(X)
-  scales <- attr(X_norm, "scaled:scale")
+  y_norm <- scale(y)
   X_norm[,1] <- 1
   
   if(QR == FALSE){
     
     # Regressions coefficients:
-    beta_hat <- as.vector((solve(t(X_norm) %*% X_norm + (lambda*diag(p)))) %*% t(X_norm) %*% as.matrix(y))
+    beta_hat <- as.vector((solve(t(X_norm) %*% X_norm + (lambda*diag(p)))) %*% t(X_norm) %*% as.matrix(y_norm))
     
   }
   else{
@@ -109,33 +110,24 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
     n <- nrow(y)
     
     if(underdetermined == TRUE){
-      res <- forwardsolve(t(R), unlist(y, use.names = FALSE))
+      res <- forwardsolve(t(R), unlist(y_norm, use.names = FALSE))
       beta_hat <- as.vector(Q[1:n,] %*% (c(res , rep(0, (ncol(Q)-length(res))))))
     }else{
-      res <- t(Q[1:n,]) %*% unlist(y, use.names = FALSE)
+      res <- t(Q[1:n,]) %*% unlist(y_norm, use.names = FALSE)
       beta_hat <- as.vector(backsolve(R , res))
     }
     X_norm <- B
   }
   
-  # trying to rescale
-  ym <- mean(y[,1])
-  xm <- colMeans(X[, -1])
-  print(xm)
-  scaledcoef <- t(as.matrix(beta_hat/scales))
-  print(scaledcoef[-1])
-  inter <- ym - (scaledcoef[-1] %*% as.vector(xm))
-  scaledcoef <- cbind(Intercept = inter, scaledcoef)
-  
+  # Regressions coefficients
+  beta_hat <- as.vector(R1magic::scaleBack.lm(X[,-1], y, beta_hat))
+
   # The fitted values:
-  y_hat <- (X_norm %*% beta_hat)[1:n]
-  y_hat_scaled <- (X_norm[-1] %*% scaledcoef)[1:n]
-  
-  ## check y - maybe normalize 
-  y_norm <- scale(y)
+  y_hat <- (X %*% beta_hat)[1:n]
+  #y_hat_scaled <- (X_norm[-1] %*% scaledcoef)[1:n]
   
   # The residuals:
-  e_hat <- as.matrix(y_norm - y_hat)
+  e_hat <- as.matrix(y - y_hat)
 
   # The degrees of freedom:
   df <- n - p
@@ -145,7 +137,7 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
 
   if(QR == FALSE){
     # The variance of the regression coefficients:
-    var_hat <- diag(resid_var * as.matrix(solve(t(X_norm) %*% X_norm)))
+    var_hat <- diag(resid_var * as.matrix(solve(t(X) %*% X)))
   }else{
     var_hat <- diag(chol2inv(R) * resid_var)
   }
@@ -166,14 +158,15 @@ ridgereg <- function(formula, data, lambda = 0, QR = FALSE) {
                      formula = formula,
                      coef = beta_hat, 
                      fits = y_hat,
-                     rescaled_fits = y_hat_scaled,
+                     #rescaled_fits = y_hat_scaled,
                      resid = e_hat,
                      df = df,
                      resid_var = resid_var,
                      coef_var = var_hat,
                      t_val = t,
                      p_val = pt,
-                     qr = QR
+                     qr = QR,
+                     lambda = lambda
   )
   return(structure(statistics, class = "ridgereg"))
 }

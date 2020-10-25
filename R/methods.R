@@ -66,20 +66,25 @@ print.ridgereg <- function(x, ...) {
   # Prints the call made
   cat("\n\nCall: \n")
   if(x$qr == TRUE){
+    lambda <- x$lambda
     writeLines(paste("ridgereg(formula = ",
                      utils::capture.output(print(formula)),
                      ", data = ",
                      utils::capture.output(print(x$data_name)),
+                     ", lambda = ",
+                     utils::capture.output(print(lambda)),
                      ", QR = TRUE)",
                      sep = ""))
   }
   else{
+    lambda <- x$lambda
     writeLines(paste("ridgereg(formula = ",
                      utils::capture.output(print(formula)),
                      ", data = ",
                      utils::capture.output(print(x$data_name)),
-                     ")",
-                     sep = ""))
+                     ", lambda = ",
+                     utils::capture.output(print(lambda)),
+                     sep = ")"))
   }
   
   cat("\nCoefficients: \n")

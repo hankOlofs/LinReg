@@ -2,7 +2,7 @@ context("ridgereg")
 
 data("iris")
 
-test_that("linreg rejects errounous input", {
+test_that("ridgereg rejects errounous input", {
   expect_error(ridgereg(Petal.Length~Sepdsal.Width+Sepal.Length, data = iris))
   expect_error(ridgereg(Petal.Length~Sepdsal.Width+Sepal.Length, data = irfsfdis))
   expect_error(ridgereg(Petal.Length~Sepal.Width+Sepal.Length, data = iris, QR = FLASE))

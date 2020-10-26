@@ -29,12 +29,17 @@ First, the `BostonHousing` data will be divided into a training set and a test s
 
 ```{r}
 data("BostonHousing")
+colnames(BostonHousing) <- make.names(colnames(BostonHousing))
 set.seed(123)
 trainIndex <- createDataPartition(BostonHousing$medv, p = .8, 
                                   list = FALSE, 
                                   times = 1)
 train_data <- BostonHousing[ trainIndex,]
+colnames(train_data) <- make.names(colnames(train_data))
+
 test_data  <- BostonHousing[-trainIndex,]
+
+print(length(test_data[,1]))
 ```
 
 After dividing the data into a training and a test set, we will now fit two linear regression models to the `BostonHousing` training data using the `caret` package - one model consists of all continuous variables as predictors, and one model with only significant continuous variables using forward selection. Another package called `leaps` is required in order to perform forward selection. 
@@ -79,41 +84,52 @@ A 10-fold cross-validation on the training set will be used in order to find the
 ```{r}
 # Include own model in train()
 # PLEASE FIND WHAT'S WRONG
-modelInfo <- list(label = "Hyperparameter",
-                  library = "linreg",
-                  type = "Regression",
-                  parameters = data.frame(parameter = "lambda",
-                  class = "numeric",
-                  label = "Hyperparameter"),
-                  grid = function(x, y, len = NULL, search = "grid"){
-                    grid <- expand.grid(lambda = seq(0, 3, length = 10))
-                  },
-                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {          
-                    ## ridgereg requires a data frame with predictors and response
-                    dat <- if(is.data.frame(x)) x else as.data.frame(x)
-                    dat$medv <- y
-                 
-                   mod <- ridgereg(
-                      medv ~ crim + zn + age + indus + chas + nox + rm + dis + rad + tax + ptratio + b + lstat,
-                      data = dat,
-                      lambda = param$lambda
-                      )
-                    },
-                  predict = function(modelFit, newdata, submodels = NULL) {
-                    print(modelFit)
-                    newdata <- as.data.frame(newdata)
-                    predict(modelFit, newdata)[,1]
-                  },
-                  loop = NULL,
-                  prob = NULL,
-                  levels = NULL)
+modelInfo <- list(
+  label = "Hyperparameter",
+  library = "linreg",
+  type = "Regression",
+  parameters = data.frame(
+    parameter = "lambda",
+    class = "numeric",
+    label = "Hyperparameter"
+  ),
+  grid = function(x, y, len = NULL, search = "grid") {
+    grid <- expand.grid(lambda = seq(0, 3, length = 10))
+  },
+  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
+    ## ridgereg requires a data frame with predictors and response
+    dat <-
+      if (is.data.frame(x))
+        x
+    else
+      as.data.frame(x)
+    dat$medv <- y
+    
+    mod <- ridgereg(
+      formula = (medv ~ crim + zn + age + indus + chas + nox + rm + dis + rad + tax + ptratio + b + lstat),
+      data = dat,
+      lambda = param$lambda
+    )
+  },
+  predict = function(modelFit, newdata, submodels = NULL) {
+    print(modelFit)
+    newdata <- as.data.frame(newdata)
+    predict(modelFit, newdata)
+  },
+  loop = NULL,
+  prob = NULL,
+  levels = NULL
+)
 
 set.seed(123)
-rr <- train(medv ~ crim + zn + age + indus + chas + nox + rm + dis + rad + tax + ptratio + b + lstat, 
-                       data = train_data, 
-                       method = modelInfo,
-                       trControl = trainControl(method = "repeatedcv",
-                                                repeats = 10))
+rr <- train(
+  x = train_data[, names(train_data) != "medv"],
+  y = train_data$medv,
+  data = train_data,
+  method = modelInfo,
+  trControl = trainControl(method = "repeatedcv",
+                           repeats = 10)
+)
 rr
 ```
 
